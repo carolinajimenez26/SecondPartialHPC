@@ -1,2 +1,2 @@
 # SecondPartialHPC
-This repository contain a investigation obout CUDA 
+This repository contain a investigation about CUDA 
