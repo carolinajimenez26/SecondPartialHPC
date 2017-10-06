@@ -10,7 +10,7 @@
 #define GREEN 1
 #define BLUE 0
 
-#define Channels 3
+#define FACTOR_MODIFY 2
 
 using namespace cv;
 
@@ -20,9 +20,13 @@ __global__ void img2gray(unsigned char *imageInput, int width, int height, unsig
     int col = blockIdx.x*blockDim.x+threadIdx.x;
 
     if((row < height) && (col < width)){
-	int pos = (row*width+col)*Channels;
 
-        imageOutput[row*width+col] = imageInput[pos+RED]*0.299 + imageInput[pos+GREEN]*0.587 + imageInput[pos+BLUE]*0.114;
+	int pos = (row*width+col)*3;
+
+        imageOutput[pos+RED] = imageInput[pos+RED]*FACTOR_MODIFY;
+	imageOutput[pos+GREEN] = imageInput[pos+GREEN]*FACTOR_MODIFY;
+	imageOutput[pos+BLUE] = imageInput[pos+BLUE]*FACTOR_MODIFY;
+
     }
 }
 
@@ -46,7 +50,7 @@ int main(int argc, char **argv){
     int width = s.width;
     int height = s.height;
     int size = sizeof(unsigned char)*width*height*image.channels();
-    int sizeGray = sizeof(unsigned char)*width*height;
+    //int sizeGray = sizeof(unsigned char)*width*height;
 
 
     //dataRawImage = (unsigned char*)malloc(size);
@@ -56,14 +60,22 @@ int main(int argc, char **argv){
         exit(-1);
     }
 
-    h_imageOutput = (unsigned char *)malloc(sizeGray);
-    error = cudaMalloc((void**)&d_imageOutput,sizeGray);
+    h_imageOutput = (unsigned char *)malloc(size);
+    error = cudaMalloc((void**)&d_imageOutput,size);
     if(error != cudaSuccess){
         printf("Error reservando memoria para d_imageOutput\n");
         exit(-1);
     }
 
+
     dataRawImage = image.data;
+
+    /*for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            dataRawImage[(i*width+j)*3+BLUE] = 0;
+        }
+
+    }*/
 
     startGPU = clock();
     error = cudaMemcpy(d_dataRawImage,dataRawImage,size, cudaMemcpyHostToDevice);
@@ -77,11 +89,11 @@ int main(int argc, char **argv){
     dim3 dimGrid(ceil(width/float(blockSize)),ceil(height/float(blockSize)),1);
     img2gray<<<dimGrid,dimBlock>>>(d_dataRawImage,width,height,d_imageOutput);
     cudaDeviceSynchronize();
-    cudaMemcpy(h_imageOutput,d_imageOutput,sizeGray,cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_imageOutput,d_imageOutput,size,cudaMemcpyDeviceToHost);
     endGPU = clock();
 
     Mat gray_image;
-    gray_image.create(height,width,CV_8UC1);
+    gray_image.create(height,width,CV_8UC3);
     gray_image.data = h_imageOutput;
 
     start = clock();
@@ -90,9 +102,19 @@ int main(int argc, char **argv){
     end = clock();
 
 
-    imwrite("./Gray_Image.jpg",gray_image);
-    
-   //display times
+    imwrite("./ImageModify.jpg",gray_image);
+
+    //namedWindow(imageName, WINDOW_NORMAL);
+    //namedWindow("Gray Image CUDA", WINDOW_NORMAL);
+    //namedWindow("Gray Image OpenCV", WINDOW_NORMAL);
+
+    //imshow(imageName,image);
+    //imshow("Gray Image CUDA", gray_image);
+    //imshow("Gray Image OpenCV",gray_image_opencv);
+
+    //waitKey(0);
+
+    //free(dataRawImage);
     gpu_time_used = ((double) (endGPU - startGPU)) / CLOCKS_PER_SEC;
     printf("Tiempo Algoritmo Paralelo: %.10f\n",gpu_time_used);
     cpu_time_used = ((double) (end - start)) /CLOCKS_PER_SEC;

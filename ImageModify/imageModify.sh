@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=imagegrayscale
-#SBATCH --output=imagegrayscale.out
+#SBATCH --job-name=imageModify
+#SBATCH --output=imageModify.out
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:1
@@ -11,4 +11,4 @@ export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64/${LD_LIBRARY_PATH:+:${LD_LIBRAR
 
 export CUDA_VISIBLE_DEVICES=0
 
-./imagegrayscale cats.jpg
+./imageModify lenna.png
