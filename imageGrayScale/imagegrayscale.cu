@@ -38,6 +38,7 @@ int main(int argc, char **argv){
 
   unsigned char *h_ImageInit;//*dataRawImage
   unsigned char *d_ImageInit;//d_dataRawImage
+
   unsigned char *d_imageOutput;
   unsigned char *h_imageOutput;
 
@@ -131,7 +132,7 @@ int main(int argc, char **argv){
 
     free(h_ImageInit);
     free(h_imageOutput);
-    cudaFree(d_dataRawImage);
+    cudaFree(d_ImageInit);
     cudaFree(d_imageOutput);
     return 0;
 }
