@@ -1,0 +1,3 @@
+/home/users/jeacevedo92/respos/SecondPartialHPC/imageGrayScale/CMakeFiles/edit_cache.dir
+/home/users/jeacevedo92/respos/SecondPartialHPC/imageGrayScale/CMakeFiles/rebuild_cache.dir
+/home/users/jeacevedo92/respos/SecondPartialHPC/imageGrayScale/CMakeFiles/imagegrayscale.out.dir
