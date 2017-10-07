@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=imageModify
-#SBATCH --output=imageModify.out
+#SBATCH --output=res_imageModify.txt
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:1
@@ -11,4 +11,4 @@ export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64/${LD_LIBRARY_PATH:+:${LD_LIBRAR
 
 export CUDA_VISIBLE_DEVICES=0
 
-./imageModify lenna.png
+./imageModify.out lenna.png
