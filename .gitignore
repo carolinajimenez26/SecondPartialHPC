@@ -1,3 +1,5 @@
+build/
+*.in
 *.i
 *.ii
 *.gpu
