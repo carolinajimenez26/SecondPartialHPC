@@ -48,7 +48,7 @@ void img2gray(unsigned char *imageInput, int width, int height, unsigned char *i
     	Mds[tx*TILE_WIDTH+ty] = imageInput[row*width + i*TILE_WIDTH + tx];
     	__syncthreads();
 
-	imageOutput[row*width+col] = Mds[(tx*TILE_WIDTH+ty)]*0.299 + Mds[(tx*TILE_WIDTH+ty)]*0.587 + Mds[(tx*TILE_WIDTH+ty)]*0.114;
+	imageOutput[row*width+col] = Mds[(tx*TILE_WIDTH+ty)*3+RED]*0.299 + Mds[(tx*TILE_WIDTH+ty)*3+GREEN]*0.587 + Mds[(tx*TILE_WIDTH+ty)*3+BLUE]*0.114;
     }
     __syncthreads();
 }
