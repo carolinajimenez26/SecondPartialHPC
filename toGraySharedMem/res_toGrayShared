@@ -1,0 +1,196 @@
+*** Error in `./toGraySharedMem': double free or corruption (out): 0x000000000164c1f0 ***
+======= Backtrace: =========
+/lib/x86_64-linux-gnu/libc.so.6(+0x777e5)[0x7fbee72ed7e5]
+/lib/x86_64-linux-gnu/libc.so.6(+0x8037a)[0x7fbee72f637a]
+/lib/x86_64-linux-gnu/libc.so.6(cfree+0x4c)[0x7fbee72fa53c]
+./toGraySharedMem(main+0x4ee)[0x4018ee]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0)[0x7fbee7296830]
+./toGraySharedMem(_start+0x29)[0x401b29]
+======= Memory map: ========
+00400000-00404000 r-xp 00000000 00:2d 60162824                           /home/users/germang2/SecondPartialHPC/toGraySharedMem/toGraySharedMem
+00603000-00604000 r--p 00003000 00:2d 60162824                           /home/users/germang2/SecondPartialHPC/toGraySharedMem/toGraySharedMem
+00604000-00605000 rw-p 00004000 00:2d 60162824                           /home/users/germang2/SecondPartialHPC/toGraySharedMem/toGraySharedMem
+01530000-01f2c000 rw-p 00000000 00:00 0                                  [heap]
+10000000-10001000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+10001000-10002000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+10002000-10003000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+10003000-10004000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+10004000-10005000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+10005000-10006000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+10006000-10007000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+10007000-10008000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+10008000-10009000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+10009000-1000a000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+1000a000-1000b000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+1000b000-1000c000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+1000c000-1000d000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+1000d000-1000e000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+1000e000-1000f000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+1000f000-10010000 rw-s 00000000 00:06 20094                              /dev/nvidia0
+10010000-20000000 ---p 00000000 00:00 0 
+200000000-200100000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+200100000-200104000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+200104000-200120000 ---p 00000000 00:00 0 
+200120000-200520000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+200520000-200524000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+200524000-200540000 ---p 00000000 00:00 0 
+200540000-200940000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+200940000-200944000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+200944000-200960000 ---p 00000000 00:00 0 
+200960000-200d60000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+200d60000-200d64000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+200d64000-200d80000 ---p 00000000 00:00 0 
+200d80000-201180000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+201180000-201184000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+201184000-2011a0000 ---p 00000000 00:00 0 
+2011a0000-2015a0000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+2015a0000-2015a4000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+2015a4000-2015c0000 ---p 00000000 00:00 0 
+2015c0000-2019c0000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+2019c0000-2019c4000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+2019c4000-2019e0000 ---p 00000000 00:00 0 
+2019e0000-201de0000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+201de0000-201de4000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+201de4000-201e00000 ---p 00000000 00:00 0 
+201e00000-202200000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+202200000-202204000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+202204000-202220000 ---p 00000000 00:00 0 
+202220000-202620000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+202620000-202624000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+202624000-202640000 ---p 00000000 00:00 0 
+202640000-202a40000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+202a40000-202a44000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+202a44000-202a60000 ---p 00000000 00:00 0 
+202a60000-202e60000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+202e60000-202e64000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+202e64000-202e80000 ---p 00000000 00:00 0 
+202e80000-203280000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+203280000-203284000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+203284000-2032a0000 ---p 00000000 00:00 0 
+2032a0000-2036a0000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+2036a0000-2036a4000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+2036a4000-2036c0000 ---p 00000000 00:00 0 
+2036c0000-203ac0000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+203ac0000-203ac4000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+203ac4000-203ae0000 ---p 00000000 00:00 0 
+203ae0000-203ee0000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+203ee0000-203ee4000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+203ee4000-203f00000 ---p 00000000 00:00 0 
+203f00000-204300000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+204300000-204400000 rw-s 00000000 00:05 67783                            /dev/zero (deleted)
+204400000-204500000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+204500000-204600000 rw-s 00000000 00:05 67784                            /dev/zero (deleted)
+204600000-204700000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+204700000-204800000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+204800000-204900000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+204900000-2049e0000 rw-s 00000000 00:06 20093                            /dev/nvidiactl
+2049e0000-d00000000 ---p 00000000 00:00 0 
+7fbed0000000-7fbed0021000 rw-p 00000000 00:00 0 
+7fbed0021000-7fbed4000000 ---p 00000000 00:00 0 
+7fbed8000000-7fbed8021000 rw-p 00000000 00:00 0 
+7fbed8021000-7fbedc000000 ---p 00000000 00:00 0 
+7fbedf7ff000-7fbedf800000 ---p 00000000 00:00 0 
+7fbedf800000-7fbee0000000 rw-p 00000000 00:00 0 
+7fbee0000000-7fbee0021000 rw-p 00000000 00:00 0 
+7fbee0021000-7fbee4000000 ---p 00000000 00:00 0 
+7fbee4006000-7fbee4007000 ---p 00000000 00:00 0 
+7fbee4007000-7fbee4807000 rw-p 00000000 00:00 0 
+7fbee4807000-7fbee4808000 ---p 00000000 00:00 0 
+7fbee4808000-7fbee5008000 rw-p 00000000 00:00 0 
+7fbee5008000-7fbee504b000 r-xp 00000000 103:02 8915713                   /usr/lib/x86_64-linux-gnu/libnvidia-fatbinaryloader.so.384.69
+7fbee504b000-7fbee524a000 ---p 00043000 103:02 8915713                   /usr/lib/x86_64-linux-gnu/libnvidia-fatbinaryloader.so.384.69
+7fbee524a000-7fbee5255000 rw-p 00042000 103:02 8915713                   /usr/lib/x86_64-linux-gnu/libnvidia-fatbinaryloader.so.384.69
+7fbee5255000-7fbee525a000 rw-p 00000000 00:00 0 
+7fbee525a000-7fbee5d77000 r-xp 00000000 103:02 8915685                   /usr/lib/x86_64-linux-gnu/libcuda.so.384.69
+7fbee5d77000-7fbee5f77000 ---p 00b1d000 103:02 8915685                   /usr/lib/x86_64-linux-gnu/libcuda.so.384.69
+7fbee5f77000-7fbee60c7000 rw-p 00b1d000 103:02 8915685                   /usr/lib/x86_64-linux-gnu/libcuda.so.384.69
+7fbee60c7000-7fbee60d5000 rw-p 00000000 00:00 0 
+7fbee60d5000-7fbee60f6000 r-xp 00000000 103:02 8921648                   /usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0
+7fbee60f6000-7fbee62f5000 ---p 00021000 103:02 8921648                   /usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0
+7fbee62f5000-7fbee62f6000 r--p 00020000 103:02 8921648                   /usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0
+7fbee62f6000-7fbee62f7000 rw-p 00021000 103:02 8921648                   /usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0
+7fbee62f7000-7fbee6312000 r-xp 00000000 00:2f 44826632                   /usr/local/lib/libz.so.1.2.11
+7fbee6312000-7fbee6511000 ---p 0001b000 00:2f 44826632                   /usr/local/lib/libz.so.1.2.11
+7fbee6511000-7fbee6512000 r--p 0001a000 00:2f 44826632                   /usr/local/lib/libz.so.1.2.11
+7fbee6512000-7fbee6513000 rw-p 0001b000 00:2f 44826632                   /usr/local/lib/libz.so.1.2.11
+7fbee6513000-7fbee6537000 r-xp 00000000 103:02 8917224                   /usr/lib/x86_64-linux-gnu/libjpeg.so.62.0.0
+7fbee6537000-7fbee6736000 ---p 00024000 103:02 8917224                   /usr/lib/x86_64-linux-gnu/libjpeg.so.62.0.0
+7fbee6736000-7fbee6737000 r--p 00023000 103:02 8917224                   /usr/lib/x86_64-linux-gnu/libjpeg.so.62.0.0
+7fbee6737000-7fbee6738000 rw-p 00024000 103:02 8917224                   /usr/lib/x86_64-linux-gnu/libjpeg.so.62.0.0
+7fbee6738000-7fbee69b1000 r-xp 00000000 00:2f 44841675                   /usr/local/lib/libopencv_imgproc.so.2.4.13
+7fbee69b1000-7fbee6bb1000 ---p 00279000 00:2f 44841675                   /usr/local/lib/libopencv_imgproc.so.2.4.13
+7fbee6bb1000-7fbee6bb6000 r--p 00279000 00:2f 44841675                   /usr/local/lib/libopencv_imgproc.so.2.4.13
+7fbee6bb6000-7fbee6bb8000 rw-p 0027e000 00:2f 44841675                   /usr/local/lib/libopencv_imgproc.so.2.4.13
+7fbee6bb8000-7fbee6c4d000 rw-p 00000000 00:00 0 
+7fbee6c4d000-7fbee6c54000 r-xp 00000000 103:02 2626163                   /lib/x86_64-linux-gnu/librt-2.23.so
+7fbee6c54000-7fbee6e53000 ---p 00007000 103:02 2626163                   /lib/x86_64-linux-gnu/librt-2.23.so
+7fbee6e53000-7fbee6e54000 r--p 00006000 103:02 2626163                   /lib/x86_64-linux-gnu/librt-2.23.so
+7fbee6e54000-7fbee6e55000 rw-p 00007000 103:02 2626163                   /lib/x86_64-linux-gnu/librt-2.23.so
+7fbee6e55000-7fbee6e6d000 r-xp 00000000 103:02 2626155                   /lib/x86_64-linux-gnu/libpthread-2.23.so
+7fbee6e6d000-7fbee706c000 ---p 00018000 103:02 2626155                   /lib/x86_64-linux-gnu/libpthread-2.23.so
+7fbee706c000-7fbee706d000 r--p 00017000 103:02 2626155                   /lib/x86_64-linux-gnu/libpthread-2.23.so
+7fbee706d000-7fbee706e000 rw-p 00018000 103:02 2626155                   /lib/x86_64-linux-gnu/libpthread-2.23.so
+7fbee706e000-7fbee7072000 rw-p 00000000 00:00 0 
+7fbee7072000-7fbee7075000 r-xp 00000000 103:02 2626033                   /lib/x86_64-linux-gnu/libdl-2.23.so
+7fbee7075000-7fbee7274000 ---p 00003000 103:02 2626033                   /lib/x86_64-linux-gnu/libdl-2.23.so
+7fbee7274000-7fbee7275000 r--p 00002000 103:02 2626033                   /lib/x86_64-linux-gnu/libdl-2.23.so
+7fbee7275000-7fbee7276000 rw-p 00003000 103:02 2626033                   /lib/x86_64-linux-gnu/libdl-2.23.so
+7fbee7276000-7fbee7436000 r-xp 00000000 103:02 2626009                   /lib/x86_64-linux-gnu/libc-2.23.so
+7fbee7436000-7fbee7636000 ---p 001c0000 103:02 2626009                   /lib/x86_64-linux-gnu/libc-2.23.so
+7fbee7636000-7fbee763a000 r--p 001c0000 103:02 2626009                   /lib/x86_64-linux-gnu/libc-2.23.so
+7fbee763a000-7fbee763c000 rw-p 001c4000 103:02 2626009                   /lib/x86_64-linux-gnu/libc-2.23.so
+7fbee763c000-7fbee7640000 rw-p 00000000 00:00 0 
+7fbee7640000-7fbee7656000 r-xp 00000000 103:02 2626047                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7fbee7656000-7fbee7855000 ---p 00016000 103:02 2626047                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7fbee7855000-7fbee7856000 rw-p 00015000 103:02 2626047                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7fbee7856000-7fbee795e000 r-xp 00000000 103:02 2626079                   /lib/x86_64-linux-gnu/libm-2.23.so
+7fbee795e000-7fbee7b5d000 ---p 00108000 103:02 2626079                   /lib/x86_64-linux-gnu/libm-2.23.so
+7fbee7b5d000-7fbee7b5e000 r--p 00107000 103:02 2626079                   /lib/x86_64-linux-gnu/libm-2.23.so
+7fbee7b5e000-7fbee7b5f000 rw-p 00108000 103:02 2626079                   /lib/x86_64-linux-gnu/libm-2.23.so
+7fbee7b5f000-7fbee7cd1000 r-xp 00000000 103:02 8922268                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21
+7fbee7cd1000-7fbee7ed1000 ---p 00172000 103:02 8922268                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21
+7fbee7ed1000-7fbee7edb000 r--p 00172000 103:02 8922268                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21
+7fbee7edb000-7fbee7edd000 rw-p 0017c000 103:02 8922268                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21
+7fbee7edd000-7fbee7ee1000 rw-p 00000000 00:00 0 
+7fbee7ee1000-7fbee82c6000 r-xp 00000000 00:2f 44841669                   /usr/local/lib/libopencv_core.so.2.4.13
+7fbee82c6000-7fbee84c5000 ---p 003e5000 00:2f 44841669                   /usr/local/lib/libopencv_core.so.2.4.13
+7fbee84c5000-7fbee84c9000 r--p 003e4000 00:2f 44841669                   /usr/local/lib/libopencv_core.so.2.4.13
+7fbee84c9000-7fbee84d2000 rw-p 003e8000 00:2f 44841669                   /usr/local/lib/libopencv_core.so.2.4.13
+7fbee84d2000-7fbee84d4000 rw-p 00000000 00:00 0 
+7fbee84d4000-7fbee86fb000 r-xp 00000000 00:2f 44841678                   /usr/local/lib/libopencv_highgui.so.2.4.13
+7fbee86fb000-7fbee88fa000 ---p 00227000 00:2f 44841678                   /usr/local/lib/libopencv_highgui.so.2.4.13
+7fbee88fa000-7fbee8900000 r--p 00226000 00:2f 44841678                   /usr/local/lib/libopencv_highgui.so.2.4.13
+7fbee8900000-7fbee8909000 rw-p 0022c000 00:2f 44841678                   /usr/local/lib/libopencv_highgui.so.2.4.13
+7fbee8909000-7fbee8911000 rw-p 00000000 00:00 0 
+7fbee8911000-7fbee8973000 r-xp 00000000 00:2f 25428106                   /usr/local/cuda-8.0/lib64/libcudart.so.8.0.61
+7fbee8973000-7fbee8b73000 ---p 00062000 00:2f 25428106                   /usr/local/cuda-8.0/lib64/libcudart.so.8.0.61
+7fbee8b73000-7fbee8b76000 rw-p 00062000 00:2f 25428106                   /usr/local/cuda-8.0/lib64/libcudart.so.8.0.61
+7fbee8b76000-7fbee8b77000 rw-p 00000000 00:00 0 
+7fbee8b77000-7fbee8b9d000 r-xp 00000000 103:02 2625981                   /lib/x86_64-linux-gnu/ld-2.23.so
+7fbee8d70000-7fbee8d7b000 rw-p 00000000 00:00 0 
+7fbee8d88000-7fbee8d89000 rw-p 00000000 00:00 0 
+7fbee8d89000-7fbee8d8a000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d8a000-7fbee8d8b000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d8b000-7fbee8d8c000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d8c000-7fbee8d8d000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d8d000-7fbee8d8e000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d8e000-7fbee8d8f000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d8f000-7fbee8d90000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d90000-7fbee8d91000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d91000-7fbee8d92000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d92000-7fbee8d93000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d93000-7fbee8d94000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d94000-7fbee8d95000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d95000-7fbee8d96000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d96000-7fbee8d97000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d97000-7fbee8d98000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d98000-7fbee8d99000 rw-s 00000000 00:06 20093                      /dev/nvidiactl
+7fbee8d99000-7fbee8d9c000 rw-p 00000000 00:00 0 
+7fbee8d9c000-7fbee8d9d000 r--p 00025000 103:02 2625981                   /lib/x86_64-linux-gnu/ld-2.23.so
+7fbee8d9d000-7fbee8d9e000 rw-p 00026000 103:02 2625981                   /lib/x86_64-linux-gnu/ld-2.23.so
+7fbee8d9e000-7fbee8d9f000 rw-p 00000000 00:00 0 
+7ffc70d28000-7ffc70d49000 rw-p 00000000 00:00 0                          [stack]
+7ffc70d4f000-7ffc70d51000 r--p 00000000 00:00 0                          [vvar]
+7ffc70d51000-7ffc70d53000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+/var/lib/slurm-llnl/slurmd/job00813/slurm_script: line 15: 12087 Aborted                 (core dumped) ./toGraySharedMem link.png
