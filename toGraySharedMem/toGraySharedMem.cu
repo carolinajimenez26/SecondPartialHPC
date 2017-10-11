@@ -34,7 +34,37 @@ void img2gray(unsigned char *imageInput, int width, int height, unsigned char *i
 }   
 
 __global__
-void convolution(){}
+void convolution(unsigned char *image, int *mask, int rows, int cols, unsigned char *result){
+    
+    int i = blockIdx.y*blockDim.y+threadIdx.y;
+    int j = blockIdx.x*blockIdx.y+threadIdx.x;
+    int sum = 0;
+
+    if(i < rows && j < cols){
+        int aux_cols = j - 1, aux_rows = i - 1;
+        for(int k = 0; k < 3; k++){ //mask rows
+            for(int l = 0; l < 3; l++){
+                if(aux_rows >= 0 && aux_cols >= 0 && aux_rows < rows && aux_cols < cols)
+                    sum += mask[(k*3)+l]*image[(aux_rows*cols)+aux_cols];
+                aux_cols++;
+            } 
+            aux_rows++;
+            aux_cols = j - 1;
+        }
+        result[(i*cols)+j] = clamp(sum);
+    }
+}
+
+__global__
+void unionCU(unsigned char *img_result, unsigned char *result_Gx, unsigned char *result_Gy, int rows, int cols){
+    int i = blockIdx.y*blockDim.y+threadIdx.y;
+    int j = blockIdx.x*blockDim.x+threadIdx.x;
+
+    if(i < rows && j < cols){
+        img_resul[(i * cols) + j] = sqrtf((result_Gx[(i * cols) + j] * result_Gx[(i * cols) + j]) + (result_Gx[(i * cols) + j] * resul_Gx[(i * cols) + j]) );
+    }
+
+}
 
 int main(int argc, char **argv){
 
@@ -49,6 +79,9 @@ int main(int argc, char **argv){
     //Image that will be pass to gray
     unsigned char *h_img_gray, *d_img_gray;
     char* imageName = argv[1];
+    //Sobel operators
+    unsigned char *d_Gx, *d_Gy, *h_Gx, *h_Gy, *h_G, *d_G;
+    int *d_XMask, *d_YMask;
     // Image readed
     Mat image;
 
