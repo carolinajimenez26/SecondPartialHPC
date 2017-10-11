@@ -60,39 +60,39 @@ CMAKE_SOURCE_DIR = /home/users/germang2/SecondPartialHPC/toGraySharedMem
 CMAKE_BINARY_DIR = /home/users/germang2/SecondPartialHPC/toGraySharedMem
 
 #=============================================================================
-# Target rules for target CMakeFiles/toGraySharedMem.dir
+# Target rules for target CMakeFiles/toGraySharedMem.out.dir
 
 # All Build rule for target.
-CMakeFiles/toGraySharedMem.dir/all:
-	$(MAKE) -f CMakeFiles/toGraySharedMem.dir/build.make CMakeFiles/toGraySharedMem.dir/depend
-	$(MAKE) -f CMakeFiles/toGraySharedMem.dir/build.make CMakeFiles/toGraySharedMem.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/users/germang2/SecondPartialHPC/toGraySharedMem/CMakeFiles --progress-num=1,2 "Built target toGraySharedMem"
-.PHONY : CMakeFiles/toGraySharedMem.dir/all
+CMakeFiles/toGraySharedMem.out.dir/all:
+	$(MAKE) -f CMakeFiles/toGraySharedMem.out.dir/build.make CMakeFiles/toGraySharedMem.out.dir/depend
+	$(MAKE) -f CMakeFiles/toGraySharedMem.out.dir/build.make CMakeFiles/toGraySharedMem.out.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/users/germang2/SecondPartialHPC/toGraySharedMem/CMakeFiles --progress-num=1,2 "Built target toGraySharedMem.out"
+.PHONY : CMakeFiles/toGraySharedMem.out.dir/all
 
 # Include target in all.
-all: CMakeFiles/toGraySharedMem.dir/all
+all: CMakeFiles/toGraySharedMem.out.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/toGraySharedMem.dir/rule: cmake_check_build_system
+CMakeFiles/toGraySharedMem.out.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/users/germang2/SecondPartialHPC/toGraySharedMem/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/toGraySharedMem.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/toGraySharedMem.out.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/users/germang2/SecondPartialHPC/toGraySharedMem/CMakeFiles 0
-.PHONY : CMakeFiles/toGraySharedMem.dir/rule
+.PHONY : CMakeFiles/toGraySharedMem.out.dir/rule
 
 # Convenience name for target.
-toGraySharedMem: CMakeFiles/toGraySharedMem.dir/rule
+toGraySharedMem.out: CMakeFiles/toGraySharedMem.out.dir/rule
 
-.PHONY : toGraySharedMem
-
-# clean rule for target.
-CMakeFiles/toGraySharedMem.dir/clean:
-	$(MAKE) -f CMakeFiles/toGraySharedMem.dir/build.make CMakeFiles/toGraySharedMem.dir/clean
-.PHONY : CMakeFiles/toGraySharedMem.dir/clean
+.PHONY : toGraySharedMem.out
 
 # clean rule for target.
-clean: CMakeFiles/toGraySharedMem.dir/clean
+CMakeFiles/toGraySharedMem.out.dir/clean:
+	$(MAKE) -f CMakeFiles/toGraySharedMem.out.dir/build.make CMakeFiles/toGraySharedMem.out.dir/clean
+.PHONY : CMakeFiles/toGraySharedMem.out.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/toGraySharedMem.out.dir/clean
 
 .PHONY : clean
 

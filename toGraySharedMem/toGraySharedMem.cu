@@ -15,43 +15,26 @@ using namespace cv;
 #define BLUE 0
 
 __device__
+__host__
 unsigned char clamp(int value){
-    if(value < 0)
-        value = 0;
-    else
-        if(value > 255)
-            value = 255;
+    if(value < 0) value = 0;
+    if(value > 255) value = 255;
     return (unsigned char)value;
 }
 
 __global__ 
 void img2gray(unsigned char *imageInput, int width, int height, unsigned char *imageOutput){
 
-    int TILE_WIDTH = 32;
+    int row = blockIdx.y*blockDim.y+threadIdx.y;
+    int col = blockIdx.x*blockDim.x+threadIdx.x;
 
-    // Matrix for save the data in shared memory
-    __shared__ float Mds[32*32];
-
-    int bx = blockIdx.x; int by = blockIdx.y;
-    int tx = threadIdx.x; int ty = threadIdx.y;
-
-    // Identify the row and column of the d_P element to work on
-
-    int row = by * TILE_WIDTH * ty;
-    int col = bx * TILE_WIDTH * tx;
-
-    int i;
-    // Loop over the d_M and d_N tiles required to compute d_P element
-    for(i = 0; i < width/1024; ++i){
-
-    	//Colaborative loading of d_M and d_N tiles into shared memory
-    	Mds[tx*TILE_WIDTH+ty] = imageInput[row*width + i*TILE_WIDTH + tx];
-    	__syncthreads();
-
-	imageOutput[row*width+col] = Mds[(tx*TILE_WIDTH+ty)*3+RED]*0.299 + Mds[(tx*TILE_WIDTH+ty)*3+GREEN]*0.587 + Mds[(tx*TILE_WIDTH+ty)*3+BLUE]*0.114;
+    if((row < height) && (col < width)){
+        imageOutput[row*width+col] = imageInput[(row*width+col)*3+RED]*0.299 + imageInput[(row*width+col)*3+GREEN]*0.587 + imageInput[(row*width+col)*3+BLUE]*0.114;
     }
-    __syncthreads();
-}
+}   
+
+__global__
+void convolution(){}
 
 int main(int argc, char **argv){
 

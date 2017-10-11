@@ -56,17 +56,6 @@ CMAKE_BINARY_DIR = /home/users/germang2/SecondPartialHPC/toGraySharedMem
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -77,6 +66,17 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named toGraySharedMem
+# Target rules for targets named toGraySharedMem.out
 
 # Build rule for target.
-toGraySharedMem: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 toGraySharedMem
-.PHONY : toGraySharedMem
+toGraySharedMem.out: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 toGraySharedMem.out
+.PHONY : toGraySharedMem.out
 
 # fast build rule for target.
-toGraySharedMem/fast:
-	$(MAKE) -f CMakeFiles/toGraySharedMem.dir/build.make CMakeFiles/toGraySharedMem.dir/build
-.PHONY : toGraySharedMem/fast
+toGraySharedMem.out/fast:
+	$(MAKE) -f CMakeFiles/toGraySharedMem.out.dir/build.make CMakeFiles/toGraySharedMem.out.dir/build
+.PHONY : toGraySharedMem.out/fast
 
 # Help Target
 help:
@@ -129,9 +129,9 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... toGraySharedMem"
+	@echo "... edit_cache"
+	@echo "... toGraySharedMem.out"
 .PHONY : help
 
 

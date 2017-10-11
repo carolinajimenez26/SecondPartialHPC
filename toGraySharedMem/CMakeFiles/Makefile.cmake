@@ -10,7 +10,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.5.1/CMakeCCompiler.cmake"
   "CMakeFiles/3.5.1/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.5.1/CMakeSystem.cmake"
-  "CMakeFiles/toGraySharedMem.dir/toGraySharedMem_generated_toGraySharedMem.cu.o.depend"
+  "CMakeFiles/toGraySharedMem.out.dir/toGraySharedMem.out_generated_toGraySharedMem.cu.o.depend"
   "CMakeLists.txt"
   "/usr/local/share/OpenCV/OpenCVConfig-version.cmake"
   "/usr/local/share/OpenCV/OpenCVConfig.cmake"
@@ -46,11 +46,11 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
-  "CMakeFiles/toGraySharedMem.dir/toGraySharedMem_generated_toGraySharedMem.cu.o.cmake"
+  "CMakeFiles/toGraySharedMem.out.dir/toGraySharedMem.out_generated_toGraySharedMem.cu.o.cmake"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/toGraySharedMem.dir/DependInfo.cmake"
+  "CMakeFiles/toGraySharedMem.out.dir/DependInfo.cmake"
   )
