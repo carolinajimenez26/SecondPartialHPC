@@ -12,7 +12,7 @@ int main( int argc, char** argv )
 
   Mat src, src_gray;
   Mat grad;
-  char* window_name = "Sobel Demo - Simple Edge Detector";
+  //char* window_name = "Sobel Demo - Simple Edge Detector";
   int scale = 1;
   int delta = 0;
   int ddepth = CV_16S;
@@ -31,7 +31,7 @@ int main( int argc, char** argv )
   cvtColor( src, src_gray, CV_BGR2GRAY );
 
   /// Create window
-  namedWindow( window_name, CV_WINDOW_AUTOSIZE );
+  //namedWindow( window_name, CV_WINDOW_AUTOSIZE );
 
   /// Generate grad_x and grad_y
   Mat grad_x, grad_y;
@@ -52,7 +52,7 @@ int main( int argc, char** argv )
 
   //imshow( window_name, grad );
    imwrite("./ImageSobel.jpg",grad);
-  waitKey(0);
+  //waitKey(0);
 
   return 0;
   }
