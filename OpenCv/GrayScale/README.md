@@ -14,7 +14,7 @@ Esto generará el ejecutable _a.out_
 
 ## Para ejecutar:
 
-# Con Slurn
+### Con Slurn
 
 En la carpeta _build_:
 
@@ -22,7 +22,7 @@ En la carpeta _build_:
 sbatch imagegrayscale.sh
 ```
 
-#local
+### local
 
 En la carpeta _build_:
 
