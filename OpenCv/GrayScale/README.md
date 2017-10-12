@@ -1,6 +1,5 @@
-# Filtro Sobel
-
-### Para compilar:
+# GrayScale
+## Para compilar:
 
 1. Crear una carpeta con el nombre __build__
 2. Moverse a esa carpeta
@@ -13,10 +12,20 @@ make
 
 Esto generará el ejecutable _a.out_
 
-### Para ejecutar:
+## Para ejecutar:
 
-En la carpeta _build_ escribir lo siguiente:
+# Con Slurn
+
+En la carpeta _build_:
 
 ```bash
-./global.out imagePath
+sbatch imagegrayscale.sh
+```
+
+#local
+
+En la carpeta _build_:
+
+```bash
+./grayScale.out imagePath
 ```

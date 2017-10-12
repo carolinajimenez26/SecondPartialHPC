@@ -15,7 +15,7 @@ Esto generará el ejecutable _a.out_
 
 ### Para ejecutar:
 
-En la carpeta _build_ escribir lo siguiente:
+En la carpeta _build_:
 
 ```bash
 ./global.out imagePath

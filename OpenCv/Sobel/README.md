@@ -15,8 +15,18 @@ Esto generará el ejecutable _a.out_
 
 ### Para ejecutar:
 
-En la carpeta _build_ escribir lo siguiente:
+# Con Slurn
+
+En la carpeta _build_:
 
 ```bash
-./global.out imagePath
+sbatch sobel.sh ..
+```
+
+#local
+
+En la carpeta _build_:
+
+```bash
+./Sobel.out imagePath
 ```

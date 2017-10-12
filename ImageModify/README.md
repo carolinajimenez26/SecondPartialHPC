@@ -1,4 +1,4 @@
-# Filtro Sobel
+# Image Modify
 
 ### Para compilar:
 

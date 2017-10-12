@@ -1,4 +1,4 @@
-# Filtro Sobel
+# image Gray Scale
 
 ### Para compilar:
 
