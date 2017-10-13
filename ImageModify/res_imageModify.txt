@@ -1,3 +1,0 @@
-Tiempo Algoritmo Paralelo: 0.0003930000
-Tiempo Algoritmo OpenCV: 0.1324400000
-La aceleración obtenida es de 336.9974554707X
