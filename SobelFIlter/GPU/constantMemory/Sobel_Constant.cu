@@ -3,6 +3,8 @@
 #include<malloc.h>
 #include<opencv2/opencv.hpp>
 
+#include <time.h>
+
 using namespace std;
 using namespace cv;
 
@@ -94,8 +96,8 @@ int main(int argc, char **argv)
 	cudaError_t error = cudaSuccess;
 
 	//times
-	//clock_t start, end;
-  	//double time_used;
+	clock_t start, end;
+  	double time_used;
   	char* imageName = argv[1];
 
   	//imagen inicial
@@ -245,6 +247,8 @@ int main(int argc, char **argv)
 
   //////////////////////////////Grises//////////////////////////////////////
 
+  start = clock();
+  
   int blockSize = 32;
   dim3 dimBlock(blockSize, blockSize, 1);
   dim3 dimGrid(ceil(width/float(blockSize)), ceil(height/float(blockSize)), 1);
@@ -282,6 +286,8 @@ int main(int argc, char **argv)
     exit(-1);
   }
 
+  end = clock();
+
 
   //crea la imagen resultante
   Mat result_Sobel;
@@ -289,6 +295,11 @@ int main(int argc, char **argv)
   result_Sobel.data = h_G;
 
   imwrite("Sobel_const.jpg", result_Sobel);
+
+  //se  calculan tiempos
+  time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
+  printf("Tiempo Algoritmo Paralelo: %.10f\n",time_used);
+  
 
   //liberar memoria
 
