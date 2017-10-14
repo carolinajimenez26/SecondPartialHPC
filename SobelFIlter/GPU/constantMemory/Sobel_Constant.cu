@@ -14,7 +14,10 @@ using namespace cv;
 
 #define MASK_WIDTH 3
 
-//	__constant__ char M[MASK_WIDTH * MASK_WIDTH];
+
+
+__constant__ char d_Mask[MASK_WIDTH * MASK_WIDTH];
+//__constant__ char d_YMask[MASK_WIDTH * MASK_WIDTH];
 
 __device__
 unsigned char clamp(int value){
@@ -27,7 +30,7 @@ unsigned char clamp(int value){
 }
 
 __global__
-void convolutionCU(unsigned char *imageInput, int *mask, int rows, int cols, unsigned char *imageOutput){
+void convolutionCU(unsigned char *imageInput, int rows, int cols, unsigned char *imageOutput){
 
   int i = blockIdx.y*blockDim.y+threadIdx.y;
   int j = blockIdx.x*blockDim.x+threadIdx.x;
@@ -36,10 +39,10 @@ void convolutionCU(unsigned char *imageInput, int *mask, int rows, int cols, uns
   if (i < rows && j < cols) {
 
     int aux_cols = j - 1, aux_rows = i - 1;
-    for (int k = 0; k < 3; k++) {//mask_rows
-      for (int l = 0; l < 3; l++) {//mask_cols
+    for (int k = 0; k < 3; k++) {
+      for (int l = 0; l < 3; l++) {
         if(aux_rows >= 0 && aux_cols >= 0 && aux_rows < rows && aux_cols < cols)
-        sum += mask[(k*3) + l] * imageInput[(aux_rows*cols) + aux_cols];
+        sum += d_Mask[(k*3) + l] * imageInput[(aux_rows*cols) + aux_cols];
 
         aux_cols++;
       }
@@ -71,12 +74,12 @@ void UnionCU(unsigned char *imageOutput, unsigned char *Gx, unsigned char *Gy, i
   int j = blockIdx.x*blockDim.x+threadIdx.x;
 
   if (i < rows && j < cols){
-    imageOutput[(i * cols) + j] = sqrtf((Gx[(i * cols) + j] * Gx[(i * cols) + j]) + (Gx[(i * cols) + j] * Gx[(i * cols) + j]) );
+    imageOutput[(i * cols) + j] = sqrtf((Gx[(i * cols) + j] * Gx[(i * cols) + j]) + (Gy[(i * cols) + j] * Gy[(i * cols) + j]) );
   }
 }
 
 
-int main(int argc, char const *argv[])
+int main(int argc, char **argv)
 {
 
 
@@ -91,8 +94,8 @@ int main(int argc, char const *argv[])
 	cudaError_t error = cudaSuccess;
 
 	//times
-	clock_t start, end;
-  	double time_used;
+	//clock_t start, end;
+  	//double time_used;
   	char* imageName = argv[1];
 
   	//imagen inicial
@@ -110,16 +113,14 @@ int main(int argc, char const *argv[])
   	unsigned char *h_G, *d_G; 
 
   	//mascaras device
-  	int *d_XMask, *d_YMask;
+  	//int *d_XMask, *d_YMask;
 
   	//mascaras device
-  	int h_XMask[MASK_WIDTH*MASK_WIDTH] = {-1, 0, 1,-2, 0, 2,-1, 0, 1};
-  	int h_YMask[MASK_WIDTH*MASK_WIDTH] = {-1,-2,-1, 0, 0, 0, 1, 2, 1};
+  	char h_XMask[] = {-1, 0, 1,-2, 0, 2,-1, 0, 1};
+  	char h_YMask[] = {-1,-2,-1, 0, 0, 0, 1, 2, 1};
 
   	//int h_XMask[3*3] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
   	//int h_YMask[3*3] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
-
-  	char* imageName = argv[1];
 
 
   	//carga la imagen inicial
@@ -146,7 +147,7 @@ int main(int argc, char const *argv[])
 	//Imagen inicial en el Host
 	h_ImageInit = (unsigned char*)malloc(size);
 	//imagen final  host
-	h_G = (unsigned char*)malloc(size);
+	h_G = (unsigned char*)malloc(sizeGray);
 
 
 
@@ -159,14 +160,14 @@ int main(int argc, char const *argv[])
   	}
 
   	//imagen en grises device
-  	 error = cudaMalloc((void**)&d_imageGray, size);
+  	 error = cudaMalloc((void**)&d_imageGray, sizeGray);
   if (error != cudaSuccess) {
     printf("Error allocating memory for d_imageGray\n");
     exit(-1);
   }
 
   //Mascara en x 
-  error = cudaMalloc((void**)&d_XMask, 3*3*sizeof(int));
+  /*error = cudaMalloc((void**)&d_XMask, 3*3*sizeof(int));
   if (error != cudaSuccess) {
     printf("Error allocating memory for d_XMask\n");
     exit(-1);
@@ -179,17 +180,23 @@ int main(int argc, char const *argv[])
     exit(-1);
   }
 
+*/
+
+
   //convoluciones//
 
   //imagen convolucion Gx device
-  error = cudaMalloc((void**)&d_Gx, size);
+  //error = cudaMalloc((void**)&d_Gx, sizeGray);
+   
+  
+  error = cudaMalloc((void**)&d_Gx, sizeGray); 
   if (error != cudaSuccess) {
     printf("Error allocating memory for d_Gx\n");
     exit(-1);
   }
 
   //imagen convolucion Gy device
-  error = cudaMalloc((void**)&d_Gy, size);
+  error = cudaMalloc((void**)&d_Gy, sizeGray);
   if (error != cudaSuccess) {
     printf("Error allocating memory for d_Gy\n");
     exit(-1);
@@ -197,7 +204,7 @@ int main(int argc, char const *argv[])
 
 
   //imagen final en device Union
-  error = cudaMalloc((void**)&d_G, size);
+  error = cudaMalloc((void**)&d_G, sizeGray);
   if (error != cudaSuccess) {
     printf("Error allocating memory for d_G\n");
     exit(-1);
@@ -207,9 +214,9 @@ int main(int argc, char const *argv[])
 
 
   //carga la imagen inicial
-  h_imageInput = image.data;
+  h_ImageInit = image.data;
 
-  error = cudaMemcpy(d_imageInput, h_imageInput, sz, cudaMemcpyHostToDevice);
+  error = cudaMemcpy(d_ImageInit, h_ImageInit, size, cudaMemcpyHostToDevice);
   if (error != cudaSuccess) {
     printf("Error copiando  imagen inicial de host a device\n");
     exit(-1);
@@ -217,17 +224,24 @@ int main(int argc, char const *argv[])
 
 
  //mascaras
-  error = cudaMemcpy(d_XMask, h_XMask, 3*3*sizeof(int), cudaMemcpyHostToDevice);
+  //error = cudaMemcpy(d_XMask, h_XMask, 3*3*sizeof(char), cudaMemcpyHostToDevice);
+
+ error = cudaMemcpyToSymbol(d_Mask, h_YMask, 3*3*sizeof(char));
+
   if (error != cudaSuccess) {
-    printf("Error copiando mascara X  de host a device\n");
+    printf("Error copiando mascara Y  de host a constante\n");
     exit(-1);
   }
 
-  error = cudaMemcpy(d_YMask, h_YMask, 3*3*sizeof(int), cudaMemcpyHostToDevice);
+ /* printf("Antes del error !!!\n");
+  error = cudaMemcpyToSymbol(d_YMask, h_YMask, 3*3*sizeof(char), cudaMemcpyHostToDevice);
+
   if(error != cudaSuccess){
-    printf("Error copiando mascara Y  de host a device\n");
+    printf("Error copiando mascara Y dsfsdf de host a device\n");
     exit(-1);
   }
+*/
+
 
   //////////////////////////////Grises//////////////////////////////////////
 
@@ -240,11 +254,20 @@ int main(int argc, char const *argv[])
   ////////////////////////////Convoluciones//////////////////////////////////
 
   // Convolution in Gx
-  convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, d_XMask, height, width, d_Gx);
+  convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, height, width, d_Gy);
   cudaDeviceSynchronize();
 
+  //Se copian los datos de la mascara  Y del host a la memoria constante
+
+   error = cudaMemcpyToSymbol(d_Mask, h_XMask, 3*3*sizeof(char));
+
+  if (error != cudaSuccess) {
+    printf("Error copiando mascara X  de host a constante\n");
+    exit(-1);
+  }
+
   // Convolution in Gy
-  convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, d_YMask, height, width, d_Gy);
+  convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, height, width, d_Gx);
   cudaDeviceSynchronize();
 
 
@@ -253,7 +276,7 @@ int main(int argc, char const *argv[])
   cudaDeviceSynchronize();
 
   //Resultado de
-  error = cudaMemcpy(h_G, d_G, size, cudaMemcpyDeviceToHost);
+  error = cudaMemcpy(h_G, d_G, sizeGray, cudaMemcpyDeviceToHost);
   if (error != cudaSuccess) {
     printf("Error copiando resultado  del device al host\n");
     exit(-1);
@@ -269,15 +292,15 @@ int main(int argc, char const *argv[])
 
   //liberar memoria
 
-  free(h_imageInput);
+  free(h_ImageInit);
   //free(h_imageGray);
   free(h_G);
 
 
-  cudaFree(d_imageInput);  
+  cudaFree(d_ImageInit);  
   cudaFree(d_imageGray);
-  cudaFree(d_XMask);
-  cudaFree(d_YMask);  
+  cudaFree(d_Mask);
+  //cudaFree(d_YMask);  
   cudaFree(d_Gx);
   cudaFree(d_Gy);
   cudaFree(d_G);
