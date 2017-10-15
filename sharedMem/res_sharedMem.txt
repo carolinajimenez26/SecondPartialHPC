@@ -1,0 +1,5 @@
+OpenCV Error: Unspecified error (could not find a writer for the specified extension) in imwrite_, file /home/cluster/Downloads/opencvInstallation/opencv-2.4.13.3/modules/highgui/src/loadsave.cpp, line 275
+terminate called after throwing an instance of 'cv::Exception'
+  what():  /home/cluster/Downloads/opencvInstallation/opencv-2.4.13.3/modules/highgui/src/loadsave.cpp:275: error: (-2) could not find a writer for the specified extension in function imwrite_
+
+/var/lib/slurm-llnl/slurmd/job01089/slurm_script: line 15: 13967 Aborted                 (core dumped) ./sharedMem.out pereira.jpg
