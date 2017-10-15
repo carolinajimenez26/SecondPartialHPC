@@ -10,6 +10,13 @@ using namespace cv;
 int main( int argc, char** argv )
 {
 
+  //times
+  clock_t start, end;
+  double time_used;
+  
+  start = clock();
+  
+
   Mat src, src_gray;
   Mat grad;
   //char* window_name = "Sobel Demo - Simple Edge Detector";
@@ -49,9 +56,14 @@ int main( int argc, char** argv )
 
   /// Total Gradient (approximate)
   addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad );
+  
+  end = clock();
+
+  time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
+  printf("%.10f\n",time_used);
 
   //imshow( window_name, grad );
-   imwrite("./ImageSobel.jpg",grad);
+   imwrite("./ImageSobelOpencv.jpg",grad);
   //waitKey(0);
 
   return 0;

@@ -310,6 +310,7 @@ int main(int argc, char **argv)
   printf("%.10f\n",time_used);
 
    //writeTimes(s, imageName, time_used);
+
    //printf("Escribio en archivo");
   
 
