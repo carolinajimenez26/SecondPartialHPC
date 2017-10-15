@@ -309,7 +309,7 @@ int main(int argc, char **argv)
   time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
    
   //printf("%d %.10f\n",time_used);
-   printf ("%ld %s %lf\n",s,imageName,time_used);
+   printf ("%d %s %f \n",s,imageName,time_used);
 
    //writeTimes(s, imageName, time_used);
 
