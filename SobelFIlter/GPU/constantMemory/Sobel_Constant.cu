@@ -3,10 +3,6 @@
 #include<malloc.h>
 #include<opencv2/opencv.hpp>
 
-#include "stats.hh"
-
-#include <time.h>
-
 using namespace std;
 using namespace cv;
 
@@ -82,12 +78,12 @@ void UnionCU(unsigned char *imageOutput, unsigned char *Gx, unsigned char *Gy, i
   }
 }
 
-void write(Size s, char* fileName, double elapsedTime){
+void writeTimes(Size s, char* fileName, double Time){
   long size = s.width * s.height;
-  FILE *f = fopen("../global.time", "a");
+  FILE *f = fopen("global.time", "a");
   if (f == NULL) printf("Error opening file!\n");
   else {
-    fprintf(f, "%ld %s %lf\n", size, fileName, elapsedTime);
+    fprintf(f, "%ld %s %lf\n", size, fileName, Time);
   }
   fclose(f);
 }
@@ -99,8 +95,8 @@ int main(int argc, char **argv)
 
 
   if (argc != 2) {
-  	printf("Usage: Image path\n");
-  	return 1;
+        printf("Usage: Image path\n");
+        return 1;
 	}
 
 	///////////////////////declaracion de variables ////////////////////////////
@@ -110,16 +106,16 @@ int main(int argc, char **argv)
 
 	//times
 	clock_t start, end;
-  	double time_used;
-  	char* imageName = argv[1];
+        double time_used;
+        char* imageName = argv[1];
 
-  	//imagen inicial
-  	unsigned char *h_ImageInit;
-  	unsigned char *d_ImageInit;
+        //imagen inicial
+        unsigned char *h_ImageInit;
+        unsigned char *d_ImageInit;
 
-  	//imagen en grises
-  	unsigned char *d_imageGray;
-  	//unsigned char *h_imageGray;
+        //imagen en grises
+        unsigned char *d_imageGray;
+        //unsigned char *h_imageGray;
 
   	//imagenes con filtro en X y en Y
   	unsigned char *d_Gx, *d_Gy;
@@ -307,13 +303,14 @@ int main(int argc, char **argv)
   result_Sobel.create(height, width, CV_8UC1);
   result_Sobel.data = h_G;
 
-  imwrite("Sobel_const.jpg", result_Sobel);
+  //imwrite("Sobel_const.jpg", result_Sobel);
 
   //se  calculan tiempos
   time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
-  printf("Tiempo Algoritmo Paralelo: %.10f\n",time_used);
+  printf("%.10f\n",time_used);
 
-   write(s, imageName, time_used);
+   //writeTimes(s, imageName, time_used);
+   //printf("Escribio en archivo");
   
 
   //liberar memoria
