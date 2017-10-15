@@ -26,11 +26,16 @@ int main( int argc, char** argv )
 
   int c;
 
+
   /// Load an image
-  src = imread( argv[1] );
+ char* imageName = argv[1];
+
+  src = imread( imageName );
 
   if( !src.data )
   { return -1; }
+
+  Size s = image.size();
 
   GaussianBlur( src, src, Size(3,3), 0, 0, BORDER_DEFAULT );
 
@@ -60,8 +65,8 @@ int main( int argc, char** argv )
   end = clock();
 
   time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
-  printf("%.10f\n",time_used);
-
+  //printf("%.10f\n",time_used);
+   printf ("%ld %s %lf\n",s,imageName,time_used);
   //imshow( window_name, grad );
    imwrite("./ImageSobelOpencv.jpg",grad);
   //waitKey(0);

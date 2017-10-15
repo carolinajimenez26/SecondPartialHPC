@@ -17,7 +17,7 @@ for i in {1..10}
 do
 	for j in {1..20}
 	do
-		./build/ImageSobel.out ../../../images/image$i.jpg >> ./testTimes/test$i.csv
+		./build/ImageSobel.out ../../../images/image$i.jpg >> times.txt
 	done
 	echo "Ready for image img$i.jpg"
 done
