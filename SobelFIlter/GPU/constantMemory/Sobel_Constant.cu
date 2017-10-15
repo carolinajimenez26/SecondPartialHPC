@@ -3,6 +3,8 @@
 #include<malloc.h>
 #include<opencv2/opencv.hpp>
 
+#include "stats.hh"
+
 #include <time.h>
 
 using namespace std;
@@ -79,6 +81,17 @@ void UnionCU(unsigned char *imageOutput, unsigned char *Gx, unsigned char *Gy, i
     imageOutput[(i * cols) + j] = sqrtf((Gx[(i * cols) + j] * Gx[(i * cols) + j]) + (Gy[(i * cols) + j] * Gy[(i * cols) + j]) );
   }
 }
+
+void write(Size s, char* fileName, double elapsedTime){
+  long size = s.width * s.height;
+  FILE *f = fopen("../global.time", "a");
+  if (f == NULL) printf("Error opening file!\n");
+  else {
+    fprintf(f, "%ld %s %lf\n", size, fileName, elapsedTime);
+  }
+  fclose(f);
+}
+
 
 
 int main(int argc, char **argv)
@@ -299,6 +312,8 @@ int main(int argc, char **argv)
   //se  calculan tiempos
   time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
   printf("Tiempo Algoritmo Paralelo: %.10f\n",time_used);
+
+   write(s, imageName, time_used);
   
 
   //liberar memoria
