@@ -1,8 +1,8 @@
 #include<iostream>
 #include<stdio.h>
 #include<malloc.h>
-#include <cv.h>
-#include <highgui.h>
+//#include <cv.h>
+//#include <highgui.h>
 #include<opencv2/opencv.hpp>
 using namespace std;
 using namespace cv;
@@ -104,12 +104,13 @@ int main(int argc, char **argv){
         Union(G,resultado_Gx,resultado_Gy,height,width);
 
         Mat resultado;
-        resultado.create(height,width,CV_8UC1);
+        //resultado.create(height,width,CV_8UC1);
 
         resultado.data = G;
-        imshow("Sobel",resultado);
+        //imshow("Sobel",resultado);
+	imwrite("./ImageSobelc.jpg",resultado);
 
-        waitKey(0);
+        //waitKey(0);
 
         //Se libera memoria
         free(G);free(resultado_Gx);free(resultado_Gy);
