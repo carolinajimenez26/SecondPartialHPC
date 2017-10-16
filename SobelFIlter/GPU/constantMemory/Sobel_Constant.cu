@@ -221,6 +221,11 @@ int main(int argc, char **argv)
     exit(-1);
   }
 
+
+  //inicia reloj
+
+  start = clock();
+
   /////////////////CudaMemCpy//////////////////////////////////////////////
 
 
@@ -235,7 +240,6 @@ int main(int argc, char **argv)
 
 
  //mascaras
-  //error = cudaMemcpy(d_XMask, h_XMask, 3*3*sizeof(char), cudaMemcpyHostToDevice);
 
  error = cudaMemcpyToSymbol(d_Mask, h_YMask, 3*3*sizeof(char));
 
@@ -244,19 +248,7 @@ int main(int argc, char **argv)
     exit(-1);
   }
 
- /* printf("Antes del error !!!\n");
-  error = cudaMemcpyToSymbol(d_YMask, h_YMask, 3*3*sizeof(char), cudaMemcpyHostToDevice);
-
-  if(error != cudaSuccess){
-    printf("Error copiando mascara Y dsfsdf de host a device\n");
-    exit(-1);
-  }
-*/
-
-
   //////////////////////////////Grises//////////////////////////////////////
-
-  start = clock();
   
   int blockSize = 32;
   dim3 dimBlock(blockSize, blockSize, 1);
@@ -273,7 +265,6 @@ int main(int argc, char **argv)
   //Se copian los datos de la mascara  Y del host a la memoria constante
 
    error = cudaMemcpyToSymbol(d_Mask, h_XMask, 3*3*sizeof(char));
-
   if (error != cudaSuccess) {
     printf("Error copiando mascara X  de host a constante\n");
     exit(-1);
@@ -294,44 +285,37 @@ int main(int argc, char **argv)
     printf("Error copiando resultado  del device al host\n");
     exit(-1);
   }
+  
 
+  //Se obtiene el ttiempo final
   end = clock();
 
 
   //crea la imagen resultante
-  Mat result_Sobel;
-  result_Sobel.create(height, width, CV_8UC1);
-  result_Sobel.data = h_G;
+  //Mat result_Sobel;
+  //result_Sobel.create(height, width, CV_8UC1);
+  //result_Sobel.data = h_G;
 
   //imwrite("Sobel_const.jpg", result_Sobel);
 
   //se  calculan tiempos
   time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
    
-  //printf("%d %.10f\n",time_used);
-   long sze = s.width * s.height;
-   printf ("%ld %s %lf \n",sze,imageName,time_used);
+   //long sze = s.width * s.height;
+   //printf ("%ld %s %lf \n",sze,imageName,time_used);
+   printf ("%lf \n",time_used);
 
-   //writeTimes(s, imageName, time_used);
-
-   //printf("Escribio en archivo");
   
-
   //liberar memoria
 
   free(h_ImageInit);
-  //free(h_imageGray);
   free(h_G);
-
-
   cudaFree(d_ImageInit);  
   cudaFree(d_imageGray);
-  cudaFree(d_Mask);
-  //cudaFree(d_YMask);  
+  cudaFree(d_Mask);  
   cudaFree(d_Gx);
   cudaFree(d_Gy);
   cudaFree(d_G);
-
-
-	return 0;
+  
+  return 0;
 }

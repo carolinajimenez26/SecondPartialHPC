@@ -68,10 +68,13 @@ int main( int argc, char** argv )
   end = clock();
 
   time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
+
   //printf("%.10f\n",time_used);
-   printf ("%ld %s %lf\n",sz,imageName,time_used);
+  //printf ("%ld %s %lf\n",sz,imageName,time_used);
+    printf ("%lf \n",time_used);
+
   //imshow( window_name, grad );
-   imwrite("./ImageSobelOpencv.jpg",grad);
+  //imwrite("./ImageSobelOpencv.jpg",grad);
   //waitKey(0);
 
   return 0;

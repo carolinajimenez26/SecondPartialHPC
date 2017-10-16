@@ -64,6 +64,10 @@ int main(int argc, char **argv){
 	char* imageName = argv[1];
 	Mat image;
 
+	//times
+  	clock_t start, end;
+   	double time_used;
+
   	image = imread(imageName, 1);
 
         if(argc !=2 || !image.data){
@@ -76,6 +80,8 @@ int main(int argc, char **argv){
         int width = s.width;
         int height = s.height;
         int size = sizeof(unsigned char)*width*height;//para la imagen en escala de grises
+	
+	start = clock();
 
         //La pasamos a escala de grises con Opencv
         Mat gray_image_opencv;//Esta es la que le vamos a aplicar el filtro Sobel
@@ -102,18 +108,26 @@ int main(int argc, char **argv){
         convolucion(img_gray, Mascara_X, height, width, resultado_Gx);
         convolucion(img_gray, Mascara_Y, height, width, resultado_Gy);
         Union(G,resultado_Gx,resultado_Gy,height,width);
+	
+   	end = clock();
+	time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
 
-        Mat resultado;
+ 	//printf ("%ld %s %lf \n",sze,imageName,time_used);
+	printf ("%lf \n",time_used);
+
+        //Mat resultado;
         //resultado.create(height,width,CV_8UC1);
 
-        resultado.data = G;
+        //resultado.data = G;
         //imshow("Sobel",resultado);
-	imwrite("./ImageSobelc.jpg",resultado);
+	//imwrite("./ImageSobelc.jpg",resultado);
 
         //waitKey(0);
 
         //Se libera memoria
-        free(G);free(resultado_Gx);free(resultado_Gy);
+        free(G);
+	free(resultado_Gx);
+	free(resultado_Gy);
 
         return 0;
 }

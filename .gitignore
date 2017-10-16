@@ -1,3 +1,4 @@
 build/
+images/
 *.out
 *.in
