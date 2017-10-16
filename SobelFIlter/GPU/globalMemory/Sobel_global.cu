@@ -133,6 +133,9 @@ int main(int argc, char **argv){
   char* imageName = argv[1];
   Mat image;
 
+  clock_t start, end;
+  double time_used;
+
   if (argc != 2) {
     printf("Usage: Image path\n");
     return 1;
@@ -181,6 +184,8 @@ int main(int argc, char **argv){
     printf("Error allocating memory for d_imageGray\n");
     exit(-1);
   }
+
+  start = clock();
 
   int blockSize = 32;
   dim3 dimBlock(blockSize, blockSize, 1);
@@ -255,6 +260,7 @@ int main(int argc, char **argv){
   }
 
   // Convolution in Gx
+  
   convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, d_XMask, height, width, d_Gx);
   cudaDeviceSynchronize();
 
