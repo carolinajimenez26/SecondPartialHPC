@@ -292,11 +292,11 @@ int main(int argc, char **argv)
 
 
   //crea la imagen resultante
-  //Mat result_Sobel;
-  //result_Sobel.create(height, width, CV_8UC1);
-  //result_Sobel.data = h_G;
+  Mat result_Sobel;
+  result_Sobel.create(height, width, CV_8UC1);
+  result_Sobel.data = h_G;
 
-  //imwrite("Sobel_const.jpg", result_Sobel);
+  imwrite("Sobel_const.jpg", result_Sobel);
 
   //se  calculan tiempos
   time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
