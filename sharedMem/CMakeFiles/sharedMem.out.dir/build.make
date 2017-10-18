@@ -251,7 +251,6 @@ CMakeFiles/sharedMem.out.dir/sharedMem.out_generated_sharedMem.cu.o: /usr/lib/gc
 CMakeFiles/sharedMem.out.dir/sharedMem.out_generated_sharedMem.cu.o: /usr/local/cuda/include/builtin_types.h
 CMakeFiles/sharedMem.out.dir/sharedMem.out_generated_sharedMem.cu.o: /usr/local/cuda/include/channel_descriptor.h
 CMakeFiles/sharedMem.out.dir/sharedMem.out_generated_sharedMem.cu.o: /usr/local/cuda/include/common_functions.h
-CMakeFiles/sharedMem.out.dir/sharedMem.out_generated_sharedMem.cu.o: /usr/local/cuda/include/cuda.h
 CMakeFiles/sharedMem.out.dir/sharedMem.out_generated_sharedMem.cu.o: /usr/local/cuda/include/cuda_device_runtime_api.h
 CMakeFiles/sharedMem.out.dir/sharedMem.out_generated_sharedMem.cu.o: /usr/local/cuda/include/cuda_runtime.h
 CMakeFiles/sharedMem.out.dir/sharedMem.out_generated_sharedMem.cu.o: /usr/local/cuda/include/cuda_runtime_api.h

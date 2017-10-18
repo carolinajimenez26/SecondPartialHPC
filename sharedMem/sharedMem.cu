@@ -80,6 +80,47 @@ void convolutionCU(unsigned char *imageInput, int *mask, int rows, int cols, uns
 }
 
 
+__global__
+void convolutionShared(unsigned char *imageInput, int rows, int cols, unsigned char *imageOutput, int Mask_Width, int *Mask){
+    int i = blockIdx.y*blockDim.y + threadIdx.y;
+    int j = blockIdx.x*blockDim.x + threadIdx.x;
+//    int TILE_SIZE = 32;
+//    __shared__ unsigned char tile[TILE_SIZE + MAX_MASK_WIDTH - 1];
+    __shared__ unsigned char tile[32+3-1][32+3-1];
+    
+    int n = Mask_Width/2;
+
+    if((i > 0 and i < rows and i > blockDim.x-n) or (j > 0 and j < cols and j > blockDim.y-n))
+    for(int aux1 = 0; aux1 < Mask_Width; aux1++){
+        for(int aux2 = 0; aux2 < Mask_Width; aux2++){
+            tile[i][j] = imageInput[i*cols+j];
+        }
+    }
+
+/*
+
+    int halo_index_left = (blockIdx.y - 1)*blockDim.y + threadIdx.y;
+    if(threadIdx.x >= blockDim.x - n){
+        tile[threadIdx.x - (blockDim.x-n)][j] = (halo_index_left < 0) ? 0 : imageInput[halo_index_left];
+    }
+*/
+   tile[n + threadIdx.x][j] = imageInput[blockIdx.x*blockDim.x + threadIdx.x];
+/*
+   int halo_index_right = (blockIdx.x + 1)*blockDim.x + threadIdx.x;
+   if(threadIdx.x < n){
+       tile[n + blockDim.x + threadIdx.x][j] = (halo_index_right >= cols) ? 0 : imageInput[halo_index_right];
+   }
+*/
+   __syncthreads();
+
+   float Pvalue = 0;
+   for(int k = 0; k < Mask_Width; k++){
+       Pvalue += tile[threadIdx.x + k][j]*Mask[k];
+   }
+
+   imageOutput[i*cols+j] = clamp(Pvalue);
+}
+
 __host__
 void img2gray(unsigned char *imageInput, int width, int height, unsigned char *imageOutput){
 
@@ -260,6 +301,8 @@ int main(int argc, char **argv){
     exit(-1);
   }
 
+  unsigned char * h_Gx  = (unsigned char*)malloc(size);
+
   error = cudaMalloc((void**)&d_Gx, size);
   if (error != cudaSuccess) {
     printf("Error allocating memory for d_Gx\n");
@@ -273,16 +316,24 @@ int main(int argc, char **argv){
   }
 
   // Convolution in Gx
-  convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, d_XMask, height, width, d_Gx);
+  //convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, d_XMask, height, width, d_Gx);
+  convolutionShared<<<dimGrid,dimBlock>>>(d_imageGray, height, width, d_Gx, 3, d_XMask);
   cudaDeviceSynchronize();
 
   // Convolution in Gy
-  convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, d_YMask, height, width, d_Gy);
+//  convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, d_YMask, height, width, d_Gy);
+  convolutionShared<<<dimGrid,dimBlock>>>(d_imageGray, height, width, d_Gy, 3, d_YMask);
   cudaDeviceSynchronize();
 
   // Union of Gx and Gy results
   UnionCU<<<dimGrid,dimBlock>>>(d_G, d_Gx, d_Gy, height, width);
   cudaDeviceSynchronize();
+
+  error= cudaMemcpy(h_Gx, d_Gx, size, cudaMemcpyDeviceToHost);
+
+  if(error != cudaSuccess){
+     printf("Error copying data from d_Gx to h_Gx\n");
+  }
 
   error = cudaMemcpy(h_G, d_G, size, cudaMemcpyDeviceToHost);
   if (error != cudaSuccess) {
