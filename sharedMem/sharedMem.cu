@@ -2,7 +2,6 @@
 #include<stdio.h>
 #include<malloc.h>
 #include<opencv2/opencv.hpp>
-// #include "timer.cpp"
 #include <time.h>
 using namespace std;
 using namespace cv;
@@ -10,7 +9,8 @@ using namespace cv;
 #define RED 2
 #define GREEN 1
 #define BLUE 0
-
+#define TILE_SIZE 32
+#define MAX_MASK_WIDTH 9
 
 __device__
 __host__
@@ -81,44 +81,51 @@ void convolutionCU(unsigned char *imageInput, int *mask, int rows, int cols, uns
 
 
 __global__
-void convolutionShared(unsigned char *imageInput, int rows, int cols, unsigned char *imageOutput, int Mask_Width, int *Mask){
+void convolutionShared(unsigned char *imageInput, int height, int width, unsigned char *imageOutput, int Mask_Width, int *Mask){
     int i = blockIdx.y*blockDim.y + threadIdx.y;
     int j = blockIdx.x*blockDim.x + threadIdx.x;
-//    int TILE_SIZE = 32;
+
 //    __shared__ unsigned char tile[TILE_SIZE + MAX_MASK_WIDTH - 1];
     __shared__ unsigned char tile[32+3-1][32+3-1];
     
     int n = Mask_Width/2;
+    int halo_index_up = (blockIdx.x-1)*blockDim.x + threadIdx.x;
+    int halo_index_down = (blockIdx.x+1)*blockDim.x + threadIdx.x;
+    int halo_index_left = (blockIdx.y-1)*blockDim.y + threadIdx.y;
+    int halo_index_right = (blockIdx.y+1)*blockDim.y + threadIdx.y;
+    int bx = blockIdx.x;  int by = blockIdx.y;
+    int tx = threadIdx.x; int ty = threadIdx.y;
+    int Row = by * TILE_SIZE + ty;
+    int Col = bx * TILE_SIZE + tx;
 
-    if((i > 0 and i < rows and i > blockDim.x-n) or (j > 0 and j < cols and j > blockDim.y-n))
-    for(int aux1 = 0; aux1 < Mask_Width; aux1++){
-        for(int aux2 = 0; aux2 < Mask_Width; aux2++){
-            tile[i][j] = imageInput[i*cols+j];
-        }
+    if(threadIdx.y >= blockDim.y-n){
+        tile[threadIdx.y - (blockDim.y-n)][tx] = (halo_index_left < 0) ? 0 : imageInput[halo_index_left];
+    }
+   if(halo_index_right < n){
+        tile[n+blockDim.y+threadIdx.y][tx] = (halo_index_right >= width)? 0 : imageInput[halo_index_right];
+    }
+    if(threadIdx.x >= blockDim.x-n){
+        tile[ty][threadIdx.x-(blockDim.x-n)] = (halo_index_up < 0) ? 0 : imageInput[halo_index_up];
+    }
+    if(halo_index_down < n){
+        tile[ty][n+blockDim.x+threadIdx.x] = (halo_index_down >= height) ? 0 : imageInput[halo_index_down];
     }
 
-/*
+   tile[n + ty][n + tx] = imageInput[blockIdx.x*blockDim.x + threadIdx.x];
 
-    int halo_index_left = (blockIdx.y - 1)*blockDim.y + threadIdx.y;
-    if(threadIdx.x >= blockDim.x - n){
-        tile[threadIdx.x - (blockDim.x-n)][j] = (halo_index_left < 0) ? 0 : imageInput[halo_index_left];
-    }
-*/
-   tile[n + threadIdx.x][j] = imageInput[blockIdx.x*blockDim.x + threadIdx.x];
-/*
-   int halo_index_right = (blockIdx.x + 1)*blockDim.x + threadIdx.x;
-   if(threadIdx.x < n){
-       tile[n + blockDim.x + threadIdx.x][j] = (halo_index_right >= cols) ? 0 : imageInput[halo_index_right];
-   }
-*/
    __syncthreads();
 
    float Pvalue = 0;
-   for(int k = 0; k < Mask_Width; k++){
-       Pvalue += tile[threadIdx.x + k][j]*Mask[k];
+   for(int m = 0; m < Mask_Width; m++){
+       for(int n = 0; n < Mask_Width; n++){
+           Pvalue += tile[i][j]*Mask[m*Mask_Width+n];
+       }
    }
+   
+   if(Row < height && Col < width)
+	imageOutput[Row*cols+Col] = clamp(Pvalue);
+   __syncthreads();
 
-   imageOutput[i*cols+j] = clamp(Pvalue);
 }
 
 __host__
