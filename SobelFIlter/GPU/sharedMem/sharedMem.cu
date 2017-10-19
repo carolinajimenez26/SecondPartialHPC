@@ -254,9 +254,10 @@ int main(int argc, char **argv){
   end = clock();
   double time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
   // printf("elapsed time: %lf", time_used);
-  write(s, imageName, time_used);
+ printf ("%lf \n",time_used);
+  //write(s, imageName, time_used);
 
-  // free(h_imageInput);
+  free(h_imageInput);
   cudaFree(d_imageInput);
   free(h_imageGray);
   cudaFree(d_imageGray);
