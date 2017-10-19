@@ -14,6 +14,7 @@ using namespace cv;
 #define MASK_WIDTH 3
 
 __constant__ char M[MASK_WIDTH*MASK_WIDTH];
+//__constant__ char YM[MASK_WIDTH*MASK_WIDTH];
 
 __device__
 unsigned char clamp(int value){
@@ -104,7 +105,7 @@ int main(int argc, char **argv){
   clock_t start, end;
   unsigned char *h_imageInput, *d_imageInput, *h_imageGray, *d_imageGray;
   unsigned char *d_Gx, *d_Gy, *h_G, *d_G; // Sobel Operators
-  int *d_XMask, *d_YMask;
+  //int *d_XMask, *d_YMask;
   char* imageName = argv[1];
   Mat image;
 
@@ -174,13 +175,13 @@ int main(int argc, char **argv){
   
   //-------------------- Masks -----------------------------
 
-  int h_XMask[3*3] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
-  int h_YMask[3*3] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
-  char h_M[] = {1,0,-1,2,0,-2,1,0,-1};
+  char h_XMask[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
+  char h_YMask[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+//  char h_M[] = {1,0,-1,2,0,-2,1,0,-1};
 
 //-------------------- copying to constant memory-------------------------
 
-  error = cudaMemcpyToSymbol(M, h_M, sizeof(char)*MASK_WIDTH*MASK_WIDTH);
+  error = cudaMemcpyToSymbol(M, h_XMask, sizeof(char)*MASK_WIDTH*MASK_WIDTH);
   if(error != cudaSuccess){
       printf("Error copying mask h_M to M\n");
       exit(-1);
@@ -196,6 +197,18 @@ int main(int argc, char **argv){
 
   //------------------------ Sobel --------------------------------
 
+  error = cudaMalloc((void**)&d_Gx, size);
+  if (error != cudaSuccess) {
+    printf("Error allocating memory for d_Gx\n");
+    exit(-1);
+  }
+
+  error = cudaMalloc((void**)&d_Gy, size);
+  if (error != cudaSuccess) {
+    printf("Error allocating memory for d_Gy\n");
+    exit(-1);
+}
+
   h_G = (unsigned char*)malloc(size);
 
   error = cudaMalloc((void**)&d_G, size);
@@ -205,9 +218,15 @@ int main(int argc, char **argv){
   }
 
   // Convolution
-  sobelSharedMem<<<dimGrid,dimBlock>>>(d_imageGray, width, height, MASK_WIDTH, d_G);
+  sobelSharedMem<<<dimGrid,dimBlock>>>(d_imageGray, width, height, MASK_WIDTH, d_Gx);
   cudaDeviceSynchronize();
-/*
+
+  error = cudaMemcpyToSymbol(M, h_YMask, sizeof(char)*MASK_WIDTH*MASK_WIDTH);
+  if(error != cudaSuccess){
+      printf("Error copying mask h_YMask to M\n");
+      exit(-1);
+  }
+
   // Convolution in Gy
   sobelSharedMem<<<dimGrid,dimBlock>>>(d_imageGray, width, height, MASK_WIDTH, d_Gy);
   cudaDeviceSynchronize();
@@ -215,7 +234,7 @@ int main(int argc, char **argv){
   // Union of Gx and Gy results
   UnionCU<<<dimGrid,dimBlock>>>(d_G, d_Gx, d_Gy, height, width);
   cudaDeviceSynchronize();
- */
+
 
   error = cudaMemcpy(h_G, d_G, size, cudaMemcpyDeviceToHost);
   if (error != cudaSuccess) {
@@ -242,8 +261,8 @@ int main(int argc, char **argv){
   cudaFree(d_imageInput);
   free(h_imageGray);
   cudaFree(d_imageGray);
-  cudaFree(d_XMask);
-  cudaFree(d_YMask);
+  //cudaFree(d_XMask);
+  //cudaFree(d_YMask);
   free(h_G);
   cudaFree(d_Gx);
   cudaFree(d_Gy);
