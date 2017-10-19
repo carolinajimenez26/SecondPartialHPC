@@ -1,3 +1,0 @@
-/home/users/jeacevedo92/respos/SecondPartialHPC/SampleOpenCv/CMakeFiles/rebuild_cache.dir
-/home/users/jeacevedo92/respos/SecondPartialHPC/SampleOpenCv/CMakeFiles/edit_cache.dir
-/home/users/jeacevedo92/respos/SecondPartialHPC/SampleOpenCv/CMakeFiles/opencvTry.dir
