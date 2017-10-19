@@ -1,2 +1,1 @@
-Error copying data from d_Gx to h_Gx
 Error copying data from d_G to h_G

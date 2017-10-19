@@ -11,6 +11,10 @@ using namespace cv;
 #define BLUE 0
 #define TILE_SIZE 32
 #define MAX_MASK_WIDTH 9
+#define MASK_WIDTH 3
+
+__constant__ char XM[MASK_WIDTH*MASK_WIDTH];
+__constant__ char YM[MASK_WIDTH*MASK_WIDTH];
 
 __device__
 __host__
@@ -123,21 +127,50 @@ void convolutionShared(unsigned char *imageInput, int height, int width, unsigne
    }
    
    if(Row < height && Col < width)
-	imageOutput[Row*cols+Col] = clamp(Pvalue);
+	imageOutput[Row*width+Col] = clamp(Pvalue);
    __syncthreads();
 
 }
 
-__host__
-void img2gray(unsigned char *imageInput, int width, int height, unsigned char *imageOutput){
+//--------------------------------------------------------------------------------------------------------------
+__global__ void sobelSharedMem(unsigned char *imageInput, int width, int height, unsigned int maskWidth,unsigned char *imageOutput, char *M){
+    __shared__ float N_ds[TILE_SIZE + MASK_WIDTH - 1][TILE_SIZE+ MASK_WIDTH - 1];
+    int n = maskWidth/2;
+    int dest = threadIdx.y*TILE_SIZE+threadIdx.x, destY = dest / (TILE_SIZE+MASK_WIDTH-1), destX = dest % (TILE_SIZE+MASK_WIDTH-1),
+        srcY = blockIdx.y * TILE_SIZE + destY - n, srcX = blockIdx.x * TILE_SIZE + destX - n,
+        src = (srcY * width + srcX);
+    if (srcY >= 0 && srcY < height && srcX >= 0 && srcX < width)
+        N_ds[destY][destX] = imageInput[src];
+    else
+        N_ds[destY][destX] = 0;
 
-  for(int row = 0; row < height; row++){
-    for(int col = 0; col < width; col++){
-      imageOutput[row*width+col] = imageInput[(row*width+col)*3+RED]*0.299 + imageInput[(row*width+col)*3+GREEN]*0.587 + imageInput[(row*width+col)*3+BLUE]*0.114;
+    // Second batch loading
+    dest = threadIdx.y * TILE_SIZE + threadIdx.x + TILE_SIZE * TILE_SIZE;
+    destY = dest /(TILE_SIZE + MASK_WIDTH - 1), destX = dest % (TILE_SIZE + MASK_WIDTH - 1);
+    srcY = blockIdx.y * TILE_SIZE + destY - n;
+    srcX = blockIdx.x * TILE_SIZE + destX - n;
+    src = (srcY * width + srcX);
+    if (destY < TILE_SIZE + MASK_WIDTH - 1) {
+        if (srcY >= 0 && srcY < height && srcX >= 0 && srcX < width)
+            N_ds[destY][destX] = imageInput[src];
+        else
+            N_ds[destY][destX] = 0;
     }
-  }
+    __syncthreads();
+
+    int accum = 0;
+    int y, x;
+    for (y = 0; y < maskWidth; y++)
+        for (x = 0; x < maskWidth; x++)
+            accum += N_ds[threadIdx.y + y][threadIdx.x + x] * M[y * maskWidth + x];
+    y = blockIdx.y * TILE_SIZE + threadIdx.y;
+    x = blockIdx.x * TILE_SIZE + threadIdx.x;
+    if (y < height && x < width)
+        imageOutput[(y * width + x)] = clamp(accum);
+    __syncthreads();
 }
 
+//--------------------------------------------------------------------------------------------------------------
 
 __global__
 void img2grayCU(unsigned char *imageInput, int width, int height, unsigned char *imageOutput){
@@ -259,45 +292,55 @@ int main(int argc, char **argv){
     exit(-1);
   }
 
-/*
-  Mat result_imageGray;
-  result_imageGray.create(height, width, CV_8UC1);
-  result_imageGray.data = h_imageGray;
-*/
-  // imshow("Gray image CUDA", result_imageGray);
-  // waitKey(0);
-  // imwrite("Gray_image_CUDA.jpg", result_imageGray);
-
-
   //-------------------- Masks -----------------------------
-
+/*
   error = cudaMalloc((void**)&d_XMask, 3*3*sizeof(int));
   if (error != cudaSuccess) {
     printf("Error allocating memory for d_XMask\n");
     exit(-1);
   }
+*/
 
+/*
   error = cudaMalloc((void**)&d_YMask, 3*3*sizeof(int));
   if (error != cudaSuccess) {
     printf("Error reservando memoria para d_Mascara_Y\n");
     exit(-1);
   }
-
+*/
   int h_XMask[3*3] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
   int h_YMask[3*3] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
 
+//-------------------- copying to constant memory-------------------------
+
+  error = cudaMemcpyToSymbol(XM, h_XMask, sizeof(char)*MASK_WIDTH*MASK_WIDTH);
+  if(error != cudaSuccess){
+      printf("Error copying mask h_XMask to M\n");
+      exit(-1);
+  }
+
+ error = cudaMemcpyToSymbol(YM, h_YMask, sizeof(char)*MASK_WIDTH*MASK_WIDTH);
+  if(error != cudaSuccess){
+      printf("Error copying mask h_YMask to M\n");
+      exit(-1);
+  }
+
+
+//------------------------------------------------------------------------
+/*
   error = cudaMemcpy(d_XMask, h_XMask, 3*3*sizeof(int), cudaMemcpyHostToDevice);
   if (error != cudaSuccess) {
     printf("Error copying data from h_XMask to d_XMask\n");
     exit(-1);
   }
-
+*/
+/*
   error = cudaMemcpy(d_YMask, h_YMask, 3*3*sizeof(int), cudaMemcpyHostToDevice);
   if(error != cudaSuccess){
     printf("Error copying data from h_YMask to d_YMask\n");
     exit(-1);
   }
-
+*/
   //------------------------ Sobel --------------------------------
 
   h_G = (unsigned char*)malloc(size);
@@ -308,39 +351,22 @@ int main(int argc, char **argv){
     exit(-1);
   }
 
-  unsigned char * h_Gx  = (unsigned char*)malloc(size);
-
-  error = cudaMalloc((void**)&d_Gx, size);
-  if (error != cudaSuccess) {
-    printf("Error allocating memory for d_Gx\n");
-    exit(-1);
-  }
-
-  error = cudaMalloc((void**)&d_Gy, size);
-  if (error != cudaSuccess) {
-    printf("Error allocating memory for d_Gy\n");
-    exit(-1);
-  }
-
   // Convolution in Gx
   //convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, d_XMask, height, width, d_Gx);
-  convolutionShared<<<dimGrid,dimBlock>>>(d_imageGray, height, width, d_Gx, 3, d_XMask);
+//  convolutionShared<<<dimGrid,dimBlock>>>(d_imageGray, height, width, d_Gx, 3, d_XMask);
+  sobelSharedMem<<<dimGrid,dimBlock>>>(d_imageGray, width, height, MASK_WIDTH, d_Gx, XM);
   cudaDeviceSynchronize();
 
   // Convolution in Gy
 //  convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, d_YMask, height, width, d_Gy);
-  convolutionShared<<<dimGrid,dimBlock>>>(d_imageGray, height, width, d_Gy, 3, d_YMask);
+//  convolutionShared<<<dimGrid,dimBlock>>>(d_imageGray, height, width, d_Gy, 3, d_YMask);
+  sobelSharedMem<<<dimGrid,dimBlock>>>(d_imageGray, width, height, MASK_WIDTH, d_Gy, YM);
   cudaDeviceSynchronize();
 
   // Union of Gx and Gy results
   UnionCU<<<dimGrid,dimBlock>>>(d_G, d_Gx, d_Gy, height, width);
   cudaDeviceSynchronize();
-
-  error= cudaMemcpy(h_Gx, d_Gx, size, cudaMemcpyDeviceToHost);
-
-  if(error != cudaSuccess){
-     printf("Error copying data from d_Gx to h_Gx\n");
-  }
+ 
 
   error = cudaMemcpy(h_G, d_G, size, cudaMemcpyDeviceToHost);
   if (error != cudaSuccess) {
