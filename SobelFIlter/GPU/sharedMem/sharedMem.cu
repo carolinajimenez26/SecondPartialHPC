@@ -24,44 +24,6 @@ unsigned char clamp(int value){
 }
 
 //-------------------------------------------------------------------------------------------------------------
-/*__global__ void sobelSharedMem(unsigned char *imageInput, int width, int height, unsigned int maskWidth,unsigned char *imageOutput){
-    __shared__ float N_ds[TILE_SIZE + MASK_WIDTH - 1][TILE_SIZE+ MASK_WIDTH - 1];
-    int n = maskWidth/2;
-    int dest = threadIdx.y*TILE_SIZE+threadIdx.x, destY = dest / (TILE_SIZE+MASK_WIDTH-1), destX = dest % (TILE_SIZE+MASK_WIDTH-1),
-        srcY = blockIdx.y * TILE_SIZE + destY - n, srcX = blockIdx.x * TILE_SIZE + destX - n,
-        src = (srcY * width + srcX);
-    if (srcY >= 0 && srcY < height && srcX >= 0 && srcX < width)
-        N_ds[destY][destX] = imageInput[src];
-    else
-        N_ds[destY][destX] = 0;
-
-    // Second batch loading
-    dest = threadIdx.y * TILE_SIZE + threadIdx.x + TILE_SIZE * TILE_SIZE;
-    destY = dest /(TILE_SIZE + MASK_WIDTH - 1), destX = dest % (TILE_SIZE + MASK_WIDTH - 1);
-    srcY = blockIdx.y * TILE_SIZE + destY - n;
-    srcX = blockIdx.x * TILE_SIZE + destX - n;
-    src = (srcY * width + srcX);
-    if (destY < TILE_SIZE + MASK_WIDTH - 1) {
-        if (srcY >= 0 && srcY < height && srcX >= 0 && srcX < width)
-            N_ds[destY][destX] = imageInput[src];
-        else
-            N_ds[destY][destX] = 0;
-    }
-    __syncthreads();
-
-    int accum = 0;
-    int y, x;
-    for (y = 0; y < maskWidth; y++)
-        for (x = 0; x < maskWidth; x++)
-            accum += N_ds[threadIdx.y + y][threadIdx.x + x] * M[y * maskWidth + x];
-    y = blockIdx.y * TILE_SIZE + threadIdx.y;
-    x = blockIdx.x * TILE_SIZE + threadIdx.x;
-    if (y < height && x < width)
-        imageOutput[(y * width + x)] = clamp(accum);
-    __syncthreads();
-}
-
-*/
 
 __global__ void sobelSharedMem(unsigned char *imageInput, int width, int height, \
         unsigned int maskWidth,unsigned char *imageOutput){
@@ -225,16 +187,7 @@ int main(int argc, char **argv){
   time_used += ((double) (end - start)) /CLOCKS_PER_SEC;
   ///////////////////////////////////////////////////////////////////////////////////
 
-
-
-/*
-  error = cudaMemcpy(h_imageGray, d_imageGray, size, cudaMemcpyDeviceToHost);
-  if (error != cudaSuccess) {
-    printf("Error copying data from d_imageGray to h_imageGray\n");
-    exit(-1);
-  }
-*/
-  
+ 
   //-------------------- Masks -----------------------------
 
   char h_XMask[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
@@ -253,14 +206,6 @@ int main(int argc, char **argv){
   end = clock();
   time_used += ((double) (end - start)) /CLOCKS_PER_SEC;
   ///////////////////////////////////////////////////////////////////////////////////
-/*
-  error = cudaMemcpyToSymbol(YM, h_YMask, sizeof(char)*MASK_WIDTH*MASK_WIDTH);
-  if(error != cudaSuccess){
-      printf("Error copying mask h_YMask to M\n");
-      exit(-1);
-  }
-*/
-
 
   //------------------------ Sobel --------------------------------
 
@@ -330,10 +275,7 @@ int main(int argc, char **argv){
 
   free(h_imageInput);
   cudaFree(d_imageInput);
-  //free(h_imageGray);
   cudaFree(d_imageGray);
-  //cudaFree(d_XMask);
-  //cudaFree(d_YMask);
   free(h_G);
   cudaFree(d_Gx);
   cudaFree(d_Gy);
