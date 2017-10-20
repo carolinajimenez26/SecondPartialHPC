@@ -14,6 +14,7 @@ export CUDA_VISIBLE_DEVICES=0
 
 ./build/sharedMem.out ../../../images/image1.jpg
 
+<<COMENT
 for i in {1..10}
 do
 	for j in {1..20}
@@ -22,3 +23,4 @@ do
 	done
 	echo "Ready for image img$i.jpg"
 done
+COMENT

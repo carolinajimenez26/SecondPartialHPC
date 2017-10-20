@@ -88,17 +88,6 @@ void UnionCU(unsigned char *imageOutput, unsigned char *Gx, unsigned char *Gy, i
   }
 }
 
-
-void write(Size s, char* fileName, double elapsedTime){
-  long size = s.width * s.height;
-  FILE *f = fopen("../global.time", "a");
-  if (f == NULL) printf("Error opening file!\n");
-  else {
-    fprintf(f, "%ld %s %lf\n", size, fileName, elapsedTime);
-  }
-  fclose(f);
-}
-
 int main(int argc, char **argv){
 
   cudaError_t error = cudaSuccess;
@@ -125,15 +114,14 @@ int main(int argc, char **argv){
 
   // // ------------------------- Gray ------------------------------
 
-  // Timer t("Sobel_Global");
-  start = clock();
-
   Size s = image.size();
 
   int width = s.width;
   int height = s.height;
   int sz = sizeof(unsigned char) * width * height * image.channels();
   int size = sizeof(unsigned char) * width * height;
+
+
 
 
   h_imageInput = (unsigned char*)malloc(sz);
@@ -144,6 +132,9 @@ int main(int argc, char **argv){
     exit(-1);
   }
 
+  /////////////////////////////////////////////////////////////////////////////////
+  start = clock();
+
   h_imageInput = image.data;
 
   error = cudaMemcpy(d_imageInput, h_imageInput, sz, cudaMemcpyHostToDevice);
@@ -152,7 +143,13 @@ int main(int argc, char **argv){
     exit(-1);
   }
 
-  h_imageGray = (unsigned char*)malloc(size);
+  end = clock();
+  time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
+  /////////////////////////////////////////////////////////////////////////////////
+
+
+
+  //h_imageGray = (unsigned char*)malloc(size);
 
   error = cudaMalloc((void**)&d_imageGray, size);
   if (error != cudaSuccess) {
@@ -160,18 +157,31 @@ int main(int argc, char **argv){
     exit(-1);
   }
 
+
+
+  /////////////////////////////////////////////////////////////////////////////////
+  start = clock();
+
   int blockSize = 32;
   dim3 dimBlock(blockSize, blockSize, 1);
   dim3 dimGrid(ceil(width/float(blockSize)), ceil(height/float(blockSize)), 1);
   img2grayCU<<<dimGrid,dimBlock>>>(d_imageInput, width, height, d_imageGray);
   cudaDeviceSynchronize();
 
+
+  end = clock();
+  time_used += ((double) (end - start)) /CLOCKS_PER_SEC;
+  ///////////////////////////////////////////////////////////////////////////////////
+
+
+
+/*
   error = cudaMemcpy(h_imageGray, d_imageGray, size, cudaMemcpyDeviceToHost);
   if (error != cudaSuccess) {
     printf("Error copying data from d_imageGray to h_imageGray\n");
     exit(-1);
   }
-
+*/
   
   //-------------------- Masks -----------------------------
 
@@ -179,13 +189,18 @@ int main(int argc, char **argv){
   char h_YMask[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
 //  char h_M[] = {1,0,-1,2,0,-2,1,0,-1};
 
-//-------------------- copying to constant memory-------------------------
 
+//-------------------- copying to constant memory-------------------------
+  start = clock();
   error = cudaMemcpyToSymbol(M, h_XMask, sizeof(char)*MASK_WIDTH*MASK_WIDTH);
   if(error != cudaSuccess){
       printf("Error copying mask h_M to M\n");
       exit(-1);
   }
+
+  end = clock();
+  time_used += ((double) (end - start)) /CLOCKS_PER_SEC;
+  ///////////////////////////////////////////////////////////////////////////////////
 /*
   error = cudaMemcpyToSymbol(YM, h_YMask, sizeof(char)*MASK_WIDTH*MASK_WIDTH);
   if(error != cudaSuccess){
@@ -217,6 +232,11 @@ int main(int argc, char **argv){
     exit(-1);
   }
 
+  //-------------------------------------------------------------------
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  start = clock();
   // Convolution
   sobelSharedMem<<<dimGrid,dimBlock>>>(d_imageGray, width, height, MASK_WIDTH, d_Gx);
   cudaDeviceSynchronize();
@@ -242,20 +262,19 @@ int main(int argc, char **argv){
     exit(-1);
   }
 
+  end = clock();
+  time_used += ((double) (end - start)) /CLOCKS_PER_SEC;
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   Mat result_Sobel;
   result_Sobel.create(height, width, CV_8UC1);
   result_Sobel.data = h_G;
 
-  // imshow("Sobel CUDA", result_Sobel);
-  // waitKey(0);
   imwrite("Sobel_Shared.png", result_Sobel);
 
-  // write(s, imageName, t.elapsed());
-  end = clock();
-  double time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
   // printf("elapsed time: %lf", time_used);
- printf ("%lf \n",time_used);
-  //write(s, imageName, time_used);
+  printf ("%lf \n",time_used);
+
 
   free(h_imageInput);
   cudaFree(d_imageInput);
