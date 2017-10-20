@@ -67,7 +67,8 @@ __global__ void sobelSharedMem(unsigned char *imageInput, int width, int height,
         unsigned int maskWidth,unsigned char *imageOutput){
 
     int size = TILE_SIZE + MASK_WIDTH - 1;
-    __shared__ float N_ds[size][size];
+    //__shared__ float N_ds[size][size];
+    __shared__ float N_ds[TILE_SIZE + MASK_WIDTH - 1][TILE_SIZE+ MASK_WIDTH - 1];
     int n = maskWidth/2;
     int dest = threadIdx.y*TILE_SIZE+threadIdx.x, destY = dest / size, destX = dest % size,
         srcY = blockIdx.y * TILE_SIZE + destY - n, srcX = blockIdx.x * TILE_SIZE + destX - n,
@@ -98,12 +99,12 @@ __global__ void sobelSharedMem(unsigned char *imageInput, int width, int height,
       return;
 
     int cur = 0, nx, ny;
-    for (int i = 0; i < MASK_SIZE; ++i) {
-      for (int j = 0; j < MASK_SIZE; ++j) {
+    for (int i = 0; i < maskWidth; ++i) {
+      for (int j = 0; j < maskWidth; ++j) {
         nx = threadIdx.y + i;
         ny = threadIdx.x + j;
         if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
-          cur += s_data[nx][ny] * g_filter[i * MASK_SIZE + j];
+          cur += N_ds[nx][ny] * M[i * MASK_SIZE + j];
         }
       }
     }
