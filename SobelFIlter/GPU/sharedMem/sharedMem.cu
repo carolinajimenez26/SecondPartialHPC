@@ -104,11 +104,11 @@ __global__ void sobelSharedMem(unsigned char *imageInput, int width, int height,
         nx = threadIdx.y + i;
         ny = threadIdx.x + j;
         if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
-          cur += N_ds[nx][ny] * M[i * MASK_SIZE + j];
+          cur += N_ds[nx][ny] * M[i * maskWidth + j];
         }
       }
     }
-    ans[x * width + y] = clamp(cur);
+    imageOutput[x * width + y] = clamp(cur);
     __syncthreads();
 }
 
