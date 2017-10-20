@@ -318,11 +318,11 @@ int main(int argc, char **argv){
   time_used += ((double) (end - start)) /CLOCKS_PER_SEC;
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  Mat result_Sobel;
-  result_Sobel.create(height, width, CV_8UC1);
-  result_Sobel.data = h_G;
+  //Mat result_Sobel;
+  //result_Sobel.create(height, width, CV_8UC1);
+  //result_Sobel.data = h_G;
 
-  imwrite("Sobel_Shared.png", result_Sobel);
+  //imwrite("Sobel_Shared.png", result_Sobel);
 
   // printf("elapsed time: %lf", time_used);
   printf ("%lf \n",time_used);
