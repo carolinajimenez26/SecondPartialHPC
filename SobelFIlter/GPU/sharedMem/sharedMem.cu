@@ -92,7 +92,8 @@ int main(int argc, char **argv){
 
   cudaError_t error = cudaSuccess;
   clock_t start, end;
-  unsigned char *h_imageInput, *d_imageInput, *h_imageGray, *d_imageGray;
+  double time_used;
+  unsigned char *h_imageInput, *d_imageInput, *d_imageGray;
   unsigned char *d_Gx, *d_Gy, *h_G, *d_G; // Sobel Operators
   //int *d_XMask, *d_YMask;
   char* imageName = argv[1];
@@ -278,7 +279,7 @@ int main(int argc, char **argv){
 
   free(h_imageInput);
   cudaFree(d_imageInput);
-  free(h_imageGray);
+  //free(h_imageGray);
   cudaFree(d_imageGray);
   //cudaFree(d_XMask);
   //cudaFree(d_YMask);
