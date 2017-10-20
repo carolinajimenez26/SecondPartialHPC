@@ -24,7 +24,7 @@ unsigned char clamp(int value){
 }
 
 //-------------------------------------------------------------------------------------------------------------
-__global__ void sobelSharedMem(unsigned char *imageInput, int width, int height, unsigned int maskWidth,unsigned char *imageOutput){
+/*__global__ void sobelSharedMem(unsigned char *imageInput, int width, int height, unsigned int maskWidth,unsigned char *imageOutput){
     __shared__ float N_ds[TILE_SIZE + MASK_WIDTH - 1][TILE_SIZE+ MASK_WIDTH - 1];
     int n = maskWidth/2;
     int dest = threadIdx.y*TILE_SIZE+threadIdx.x, destY = dest / (TILE_SIZE+MASK_WIDTH-1), destX = dest % (TILE_SIZE+MASK_WIDTH-1),
@@ -58,6 +58,56 @@ __global__ void sobelSharedMem(unsigned char *imageInput, int width, int height,
     x = blockIdx.x * TILE_SIZE + threadIdx.x;
     if (y < height && x < width)
         imageOutput[(y * width + x)] = clamp(accum);
+    __syncthreads();
+}
+
+*/
+
+__global__ void sobelSharedMem(unsigned char *imageInput, int width, int height, \
+        unsigned int maskWidth,unsigned char *imageOutput){
+
+    int size = TILE_SIZE + MASK_WIDTH - 1;
+    __shared__ float N_ds[size][size];
+    int n = maskWidth/2;
+    int dest = threadIdx.y*TILE_SIZE+threadIdx.x, destY = dest / size, destX = dest % size,
+        srcY = blockIdx.y * TILE_SIZE + destY - n, srcX = blockIdx.x * TILE_SIZE + destX - n,
+        src = (srcY * width + srcX);
+    if (srcY >= 0 && srcY < height && srcX >= 0 && srcX < width)
+        N_ds[destY][destX] = imageInput[src];
+    else
+        N_ds[destY][destX] = 0;
+
+    // Second batch loading
+    dest = threadIdx.y * TILE_SIZE + threadIdx.x + TILE_SIZE * TILE_SIZE;
+    destY = dest / size, destX = dest % size;
+    srcY = blockIdx.y * TILE_SIZE + destY - n;
+    srcX = blockIdx.x * TILE_SIZE + destX - n;
+    src = (srcY * width + srcX);
+    if (destY < size) {
+        if (srcY >= 0 && srcY < height && srcX >= 0 && srcX < width)
+            N_ds[destY][destX] = imageInput[src];
+        else
+            N_ds[destY][destX] = 0;
+    }
+    __syncthreads();
+
+    int x = blockIdx.y * blockDim.y + threadIdx.y;
+    int y = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (x > height || y > width)
+      return;
+
+    int cur = 0, nx, ny;
+    for (int i = 0; i < MASK_SIZE; ++i) {
+      for (int j = 0; j < MASK_SIZE; ++j) {
+        nx = threadIdx.y + i;
+        ny = threadIdx.x + j;
+        if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
+          cur += s_data[nx][ny] * g_filter[i * MASK_SIZE + j];
+        }
+      }
+    }
+    ans[x * width + y] = clamp(cur);
     __syncthreads();
 }
 
