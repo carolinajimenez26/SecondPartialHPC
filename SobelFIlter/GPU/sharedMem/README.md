@@ -1,6 +1,6 @@
 # Filtro Sobel
 
-### Para compilar:
+## Para compilar:
 
 1. Crear una carpeta con el nombre __build__
 2. Moverse a esa carpeta
@@ -11,10 +11,17 @@ cmake -DCUDA_USE_STATIC_CUDA_RUNTIME=OFF ..
 make
 ```
 
-Esto generará el ejecutable _a.out_
+Esto generará el ejecutable _sharedMem.out_
 
-### Para ejecutar:
+## Para ejecutar:
 
+### Con slurn
+
+```bash
+sbatch  SharedMem.sh
+```
+
+### Local
 En la carpeta _build_ escribir lo siguiente:
 
 ```bash
