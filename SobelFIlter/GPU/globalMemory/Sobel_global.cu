@@ -133,6 +133,9 @@ int main(int argc, char **argv){
   char* imageName = argv[1];
   Mat image;
 
+  clock_t start, end;
+  double time_used;
+
   if (argc != 2) {
     printf("Usage: Image path\n");
     return 1;
@@ -145,9 +148,6 @@ int main(int argc, char **argv){
     return 1;
   }
 
-  // imshow("Image input", image);
-  // waitKey(0);
-  //
   // // ------------------------- Gray ------------------------------
 
   Size s = image.size();
@@ -167,12 +167,18 @@ int main(int argc, char **argv){
   }
 
   h_imageInput = image.data;
-
+  
+  start = clock();   
+  
   error = cudaMemcpy(d_imageInput, h_imageInput, sz, cudaMemcpyHostToDevice);
   if (error != cudaSuccess) {
     printf("Error copying data from h_imageInput to d_imageInput\n");
     exit(-1);
   }
+
+  end = clock();
+  time_used = ((double) (end - start)) /CLOCKS_PER_SEC;
+  
 
   h_imageGray = (unsigned char*)malloc(size);
 
@@ -180,28 +186,19 @@ int main(int argc, char **argv){
   if (error != cudaSuccess) {
     printf("Error allocating memory for d_imageGray\n");
     exit(-1);
-  }
+  } 
+
+
+  start = clock();
 
   int blockSize = 32;
   dim3 dimBlock(blockSize, blockSize, 1);
   dim3 dimGrid(ceil(width/float(blockSize)), ceil(height/float(blockSize)), 1);
   img2grayCU<<<dimGrid,dimBlock>>>(d_imageInput, width, height, d_imageGray);
   cudaDeviceSynchronize();
-
-  error = cudaMemcpy(h_imageGray, d_imageGray, size, cudaMemcpyDeviceToHost);
-  if (error != cudaSuccess) {
-    printf("Error copying data from d_imageGray to h_imageGray\n");
-    exit(-1);
-  }
-
-  Mat result_imageGray;
-  result_imageGray.create(height, width, CV_8UC1);
-  result_imageGray.data = h_imageGray;
-
-  // imshow("Gray image CUDA", result_imageGray);
-  // waitKey(0);
-  // imwrite("Gray_image_CUDA.jpg", result_imageGray);
-
+  
+  end = clock();
+  time_used += ((double) (end - start)) /CLOCKS_PER_SEC;
 
   //-------------------- Masks -----------------------------
 
@@ -219,6 +216,9 @@ int main(int argc, char **argv){
 
   int h_XMask[3*3] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
   int h_YMask[3*3] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+  
+
+  start = clock();
 
   error = cudaMemcpy(d_XMask, h_XMask, 3*3*sizeof(int), cudaMemcpyHostToDevice);
   if (error != cudaSuccess) {
@@ -231,6 +231,9 @@ int main(int argc, char **argv){
     printf("Error copying data from h_YMask to d_YMask\n");
     exit(-1);
   }
+
+  end = clock();
+  time_used += ((double) (end - start)) /CLOCKS_PER_SEC;
 
   //------------------------ Sobel --------------------------------
 
@@ -254,7 +257,11 @@ int main(int argc, char **argv){
     exit(-1);
   }
 
+
+  start = clock();
+  
   // Convolution in Gx
+  
   convolutionCU<<<dimGrid,dimBlock>>>(d_imageGray, d_XMask, height, width, d_Gx);
   cudaDeviceSynchronize();
 
@@ -271,14 +278,17 @@ int main(int argc, char **argv){
     printf("Error copying data from d_G to h_G\n");
     exit(-1);
   }
+ 
+  end = clock();
+  time_used += ((double) (end - start)) /CLOCKS_PER_SEC;
 
-  Mat result_Sobel;
-  result_Sobel.create(height, width, CV_8UC1);
-  result_Sobel.data = h_G;
+  //printf ("%ld %s %lf \n",sze,imageName,time_used);
+  printf ("%lf \n",time_used);
 
-  // imshow("Sobel CUDA", result_Sobel);
-  // waitKey(0);
-  imwrite("Sobel_Global.jpg", result_Sobel);
+
+  //Mat result_Sobel;
+  //result_Sobel.create(height, width, CV_8UC1);
+  //result_Sobel.data = h_G;
 
   free(h_imageInput);
   cudaFree(d_imageInput);

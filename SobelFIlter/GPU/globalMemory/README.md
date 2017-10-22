@@ -1,6 +1,6 @@
 # Filtro Sobel
 
-### Para compilar:
+## Para compilar:
 
 1. Crear una carpeta con el nombre __build__
 2. Moverse a esa carpeta
@@ -11,11 +11,18 @@ cmake -DCUDA_USE_STATIC_CUDA_RUNTIME=OFF ..
 make
 ```
 
-Esto generará el ejecutable _a.out_
+Esto generará el ejecutable _global.out_
 
-### Para ejecutar:
+## Para ejecutar:
 
-En la carpeta _build_:
+### Con slurn
+
+```bash
+sbatch  Sobel_global.sh
+```
+
+### Local
+En la carpeta _build_ escribir lo siguiente:
 
 ```bash
 ./global.out imagePath
